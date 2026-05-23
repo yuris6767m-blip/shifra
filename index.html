@@ -28,7 +28,7 @@
             margin: 10px auto 0;
             padding: 0 20px;
             display: flex;
-            justify-content: flex-end; /* يضع الزر في زاوية الشاشة دائماً */
+            justify-content: flex-end;
         }
         .lang-btn {
             background: var(--gold-text);
@@ -57,7 +57,6 @@
             max-width: 1100px;
             margin: 0 auto 20px;
             display: flex;
-            /* يوزع الزر لليمين في العربي، وتلقائياً لليسار في الإنجليزي بناءً على الـ dir */
             justify-content: flex-start; 
             padding: 0 20px;
         }
@@ -122,7 +121,7 @@
     <header>
         <div id="header-top-row">
             <div id="discord-auth-container">
-                <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra-platform%2F&scope=identify" 
+                <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" 
                    style="background-color: #5865F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); font-family: sans-serif; transition: background 0.3s ease;">
                     <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff" style="display: inline-block; vertical-align: middle;">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
@@ -179,4 +178,44 @@
                     <span class="role-badge badge-admin" id="text-member1-badge">إدارة بصمة</span>
                 </div>
                 <div class="card card-in-beige">
-                    <div class="avatar-container"><img src="https://
+                    <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=DevB2" class="member-avatar" alt="المطور"></div>
+                    <h3 id="text-member2-title">المطوّر المتميز</h3>
+                    <p id="text-member2-desc">المسؤول عن البنية البرمجية وضمان جودة الأكواد في المنصة.</p>
+                    <span class="role-badge badge-dev" id="text-member2-badge">مبرمجي شفرة</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-burgundy">
+            <h2 id="text-contact-title"><i class="fa-solid fa-paper-plane"></i> قنوات التواصل والتقديم الرسمية</h2>
+            <p id="text-contact-desc">تابع منصة شفرة عبر المنصات الرسمية لتكون أول من يعلم بالورش والفعاليات والمشاريع القادمة:</p>
+
+            <div class="grid-3">
+                <div class="card card-in-burgundy">
+                    <i class="fa-brands fa-instagram"></i>
+                    <h3 id="text-social1-title">الإنستغرام الرسمي</h3>
+                    <p id="text-social1-desc">أحدث الأخبار، التغطيات، والإعلانات الرسمية للمنصة.</p>
+                    <a href="https://instagram.com/shifra_platform" class="contact-link" target="_blank">@shifra_platform</a>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-brands fa-discord"></i>
+                    <h3 id="text-social2-title">سيرفر الديسكورد</h3>
+                    <p id="text-social2-desc">المجتمع التفاعلي، ورش العمل، وغرف الحوار البرمجية.</p>
+                    <a href="https://discord.com" class="contact-link" id="text-social2-link" target="_blank">انضم إلينا الآن</a>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <h3 id="text-social3-title">حساب المسؤول</h3>
+                    <p id="text-social3-desc">للتواصل المباشر والاستفسارات الإدارية والخاصة.</p>
+                    <a href="https://discord.com" class="contact-link" target="_blank">@e4.g</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p id="text-footer">جميع الحقوق محفوظة © منصة شفرة | تدار بواسطة فريق بصمة التقني 2026</p>
+    </footer>
+
+    <iframe src="
