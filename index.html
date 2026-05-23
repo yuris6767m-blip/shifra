@@ -71,6 +71,15 @@
 
     <header>
         <h1>منصة شفرة</h1>
+        <div id="discord-auth-container" style="text-align: center; margin: 25px 0;">
+    <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra-platform%2F&scope=identify" 
+       style="background-color: #5865F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); font-family: sans-serif; transition: background 0.3s ease;">
+        <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff" style="display: inline-block; vertical-align: middle;">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
+        </svg>
+        تسجيل الدخول عبر الديسكورد
+    </a>
+</div>
         <p>الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي والتمكين البرمجي الفعال تحت إدارة فريق بصمة.</p>
     </header>
 
@@ -161,5 +170,52 @@
             allow="clipboard-write; gamepad; microphone; geolocation; encrypted-media; fullscreen; picture-in-picture; computer-info; camera; interest-cohort" 
             style="position: fixed; bottom: 20px; right: 20px; width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 99999;">
     </iframe>
+    <script>
+    (function() {
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        let accessToken = fragment.get('access_token');
+        
+        if (!accessToken) {
+            accessToken = localStorage.getItem('discord_token');
+        }
+
+        if (accessToken) {
+            localStorage.setItem('discord_token', accessToken);
+            if (window.location.hash.includes('access_token')) {
+                window.history.replaceState(null, null, window.location.pathname + window.location.search);
+            }
+
+            fetch('https://discord.com/api/users/@me', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Token expired');
+                return res.json();
+            })
+            .then(response => {
+                const { username, avatar, id } = response;
+                const container = document.getElementById('discord-auth-container');
+                
+                const avatarURL = avatar 
+                    ? `https://cdn.discordapp.com/avatars/${id}/${avatar}.png` 
+                    : `https://cdn.discordapp.com/embed/avatars/0.png`;
+
+                container.innerHTML = `
+                    <div style="display: inline-flex; align-items: center; gap: 12px; background: #1a1a1a; padding: 10px 20px; border-radius: 50px; border: 2px solid #5865F2; box-shadow: 0 4px 15px rgba(0,0,0,0.2); direction: rtl;">
+                        <img src="${avatarURL}" alt="${username}" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #fff;">
+                        <span style="color: #fff; font-weight: bold; font-family: sans-serif; font-size: 15px;">مرحباً بك، ${username} 👋</span>
+                        <button onclick="localStorage.removeItem('discord_token'); location.reload();" style="background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; margin-right: 15px; transition: 0.3s;">تسجيل خروج</button>
+                    </div>
+                `;
+            })
+            .catch(err => {
+                console.error("انتهت صلاحية الجلسة أو حدث خطأ:", err);
+                localStorage.removeItem('discord_token');
+            });
+        }
+    })();
+</script>
 </body>
 </html>
