@@ -6,80 +6,156 @@
     <title>منصة شفرة | Shifra Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bg-burgundy: #4a0002; /* العنابي الفخم للمنصة */
-            --gold-accent: #c3834c; /* الذهبي شفرة */
-            --blue-light: #4d82f3;  /* لمسة الأزرق لفريق بصمة */
-            --text-white: #fbeadb;
-            --card-bg: rgba(255, 255, 255, 0.04);
+            --bg-burgundy: #580c10;     /* الأحمر العنابي الأساسي للبوست */
+            --bg-beige: #f4ebd9;        /* البيج الدافيء للخلفيات المتبادلة */
+            --gold-text: #d4af37;       /* الذهبي للنصوص العناوية */
+            --text-dark: #2b0608;       /* العنابي الغامق للنصوص فوق البيج */
+            --text-light: #fbeadb;      /* النص الفاتح فوق العنابي */
+            --card-dark: rgba(255, 255, 255, 0.05);
+            --card-light: rgba(88, 12, 16, 0.06);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-burgundy); color: var(--text-white); padding-bottom: 50px; }
-        .wrapper { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; padding: 60px 20px; border-bottom: 1px solid rgba(195,131,76,0.2); }
-        header h1 { font-size: 3rem; color: var(--gold-accent); margin-bottom: 10px; font-weight: 800; }
-        header p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; opacity: 0.9; }
-        .about-section { background: rgba(0,0,0,0.2); padding: 30px; border-radius: 12px; margin: 40px 0; border: 1px solid rgba(195,131,76,0.1); }
-        .about-section h2 { color: var(--blue-light); margin-bottom: 15px; font-size: 1.8rem; }
-        .about-section p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 10px; }
-        .section-title { font-size: 1.8rem; color: var(--gold-accent); margin: 40px 0 20px 0; border-right: 4px solid var(--blue-light); padding-right: 15px; font-weight: 600; }
-        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .member-card { background: var(--card-bg); border-radius: 12px; padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .avatar-container { width: 110px; height: 110px; margin: 0 auto 15px; }
-        .member-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue-light); background: #1a1a1a; }
-        .role-badge { display: inline-block; padding: 4px 14px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-top: 12px; }
-        .role-admin { background: #ff4757; color: white; }
-        .role-dev { background: var(--blue-light); color: white; }
-        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 20px; }
-        .contact-card { background: rgba(0,0,0,0.15); padding: 25px; border-radius: 10px; border-right: 4px solid var(--gold-accent); text-align: center; }
-        .contact-card i { font-size: 2.2rem; color: var(--blue-light); margin-bottom: 12px; }
-        .contact-link { color: var(--text-white); text-decoration: none; font-weight: bold; display: block; font-size: 1.05rem; }
+        body { background-color: var(--bg-burgundy); color: var(--text-light); line-height: 1.8; }
+        
+        /* الهيدر الرئيسي */
+        header { text-align: center; padding: 80px 20px; background: linear-gradient(180px, #420609, var(--bg-burgundy)); border-bottom: 3px solid var(--gold-text); }
+        header h1 { font-size: 3.5rem; color: var(--gold-text); font-weight: 900; margin-bottom: 15px; }
+        header p { font-size: 1.3rem; max-width: 800px; margin: 0 auto; opacity: 0.95; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        /* الأقسام ذات الخلفية البيج */
+        .section-beige { background-color: var(--bg-beige); color: var(--text-dark); border-radius: 16px; padding: 40px; margin-bottom: 40px; border-left: 6px solid var(--bg-burgundy); }
+        .section-beige h2 { color: var(--bg-burgundy); font-size: 2rem; margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid rgba(88,12,16,0.1); padding-bottom: 10px; }
+
+        /* الأقسام ذات الخلفية العنابية */
+        .section-burgundy { background-color: rgba(0, 0, 0, 0.15); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 40px; margin-bottom: 40px; }
+        .section-burgundy h2 { color: var(--gold-text); font-size: 2rem; margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid rgba(212,175,55,0.1); padding-bottom: 10px; }
+
+        /* كروت الميزات والكفاءات */
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 25px; }
+        
+        .card { padding: 30px; border-radius: 12px; text-align: center; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card-in-beige { background: var(--card-light); border: 1px solid rgba(88,12,16,0.1); }
+        .card-in-burgundy { background: var(--card-dark); border: 1px solid rgba(255,255,255,0.05); }
+
+        .card i { font-size: 2.5rem; margin-bottom: 15px; }
+        .card-in-beige i { color: var(--bg-burgundy); }
+        .card-in-burgundy i { color: var(--gold-text); }
+        .card h3 { margin-bottom: 10px; font-size: 1.4rem; }
+
+        /* لوحة الأعضاء */
+        .avatar-container { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .member-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold-text); background: #1a1a1a; }
+        .role-badge { display: inline-block; padding: 4px 14px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-top: 12px; color: white; }
+        .badge-admin { background: #a61c22; }
+        .badge-dev { background: #2c3e50; }
+
+        /* أزرار وقنوات التواصل */
+        .contact-link { display: inline-block; margin-top: 15px; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; }
+        .card-in-beige .contact-link { background: var(--bg-burgundy); color: var(--bg-beige); }
+        .card-in-beige .contact-link:hover { background: #420609; }
+        .card-in-burgundy .contact-link { background: var(--gold-text); color: var(--text-dark); }
+        .card-in-burgundy .contact-link:hover { background: #bd9a2b; }
+
+        footer { text-align: center; padding: 40px; font-size: 0.9rem; opacity: 0.7; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 50px; }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <h1>منصة شفرة</h1>
-            <p>الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي تحت إدارة فريق بصمة.</p>
-        </header>
 
-        <section class="about-section">
-            <h2><i class="fa-solid fa-layer-group"></i> رؤية موحدة ونحو التمكين التقني</h2>
-            <p><strong>منصة شفرة (Shifra Platform):</strong> هو مجتمع رقمي تفاعلي يجمع العقول البرمجية العربية في مكان واحد، ويهدف إلى تطوير المهارات عبر بيئة خصبة للتعلم المشترك وتطوير مشاريع تقنية هادفة.</p>
-            <p><strong>فريق بصمة الإداري:</strong> يمثل الكفاءة التشغيلية والمسؤول بالكامل عن إدارة وتوجيه السيرفر وتخطي صعوبات البدايات.</p>
+    <header>
+        <h1>منصة شفرة</h1>
+        <p>الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي والتمكين البرمجي الفعال تحت إدارة فريق بصمة.</p>
+    </header>
+
+    <div class="container">
+
+        <section class="section-beige">
+            <h2><i class="fa-solid fa-circle-info"></i> عن منصة شفرة</h2>
+            <p><strong>منصة شفرة (Shifra Platform):</strong> هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز. نهدف في شفرة إلى كسر حواجز التعلم التقليدية وفتح آفاق جديدة لبناء جيل برمي قادر على مواكبة أحدث التقنيات العالمية وابتكار الحلول الذكية.</p>
+            <p style="margin-top: 15px;">نحن نؤمن بأن البرمجة ليست مجرد كتابة أسطر برمجية، بل هي أداة لتغيير الواقع وصناعة الأثر، ومن هنا جاءت الشراكة الإستراتيجية مع <strong>فريق بصمة</strong> الإداري لتوفير الكفاءة التشغيلية والدعم اللوجستي المستمر.</p>
         </section>
 
-        <div class="section-title">لوحة الكفاءات التشغيلية والمتميزين</div>
-        <section class="member-grid">
-            <div class="member-card">
-                <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=B1" class="member-avatar" alt="الإدارة"></div>
-                <h3>المسؤول الإداري</h3>
-                <span class="role-badge role-admin">إدارة بصمة</span>
-            </div>
-            <div class="member-card">
-                <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=B2" class="member-avatar" alt="مبرمج"></div>
-                <h3>المطوّر المتميز</h3>
-                <span class="role-badge role-dev">مبرمجي شفرة</span>
+        <section class="section-burgundy">
+            <h2><i class="fa-solid fa-cubes"></i> ركائزنا التقنية والتعليمية</h2>
+            <p>نقوم ببناء مجتمعنا على أسس متينة تضمن استمرار العطاء وتطوير الكفاءات بشكل تصاعدي ومستمر:</p>
+            
+            <div class="grid-3">
+                <div class="card card-in-burgundy">
+                    <i class="fa-solid fa-users"></i>
+                    <h3>المجتمع التفاعلي</h3>
+                    <p>بيئة حيوية تتيح للمبرمجين مناقشة الأكواد، حل المشكلات البرمجية، وتبادل الخبرات التقنية اليومية.</p>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <h3>تطوير المهارات</h3>
+                    <p>مسارات تعليمية وتطبيقية موجهة تسعى لرفع كفاءة الأعضاء من مستويات التأسيس إلى الاحتراف الفعلي.</p>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <h3>المشاريع المبتكرة</h3>
+                    <p>احتضان الأفكار البرمجية المميزة وتحويلها إلى مشاريع حقيقية على أرض الواقع تخدم المجتمع الرقمي.</p>
+                </div>
             </div>
         </section>
 
-        <div class="section-title">قنوات التواصل والتقديم الرسمية</div>
-        <section class="contact-grid">
-            <div class="contact-card">
-                <i class="fa-brands fa-instagram"></i>
-                <h4>الإنستغرام الرسمي</h4>
-                <a href="https://instagram.com/shifra_platform" class="contact-link" target="_blank">@shifra_platform</a>
-            </div>
-            <div class="contact-card">
-                <i class="fa-brands fa-discord"></i>
-                <h4>حساب المسؤول (Discord)</h4>
-                <a href="https://discord.com" class="contact-link" target="_blank">@e4.g</a>
+        <section class="section-beige">
+            <h2><i class="fa-solid fa-id-card"></i> لوحة الكفاءات والمسؤولين</h2>
+            <p>يشرف على إدارة وتطوير وتوجيه المنصة كفاءات بشرية وإدارية تسهر على تقديم أفضل تجربة ممكنة:</p>
+
+            <div class="grid-3">
+                <div class="card card-in-beige">
+                    <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminB1" class="member-avatar" alt="الإدارة"></div>
+                    <h3>المسؤول الإداري</h3>
+                    <p>يتولى قيادة العمليات التنظيمية وتوفير الدعم لفريق العمل.</p>
+                    <span class="role-badge badge-admin">إدارة بصمة</span>
+                </div>
+                <div class="card card-in-beige">
+                    <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=DevB2" class="member-avatar" alt="المطور"></div>
+                    <h3>المطوّر المتميز</h3>
+                    <p>المسؤول عن البنية البرمجية وضمان جودة الأكواد في المنصة.</p>
+                    <span class="role-badge badge-dev">مبرمجي شفرة</span>
+                </div>
             </div>
         </section>
+
+        <section class="section-burgundy">
+            <h2><i class="fa-solid fa-paper-plane"></i> قنوات التواصل والتقديم الرسمية</h2>
+            <p>تابع منصة شفرة عبر المنصات الرسمية لتكون أول من يعلم بالورش والفعاليات والمشاريع القادمة:</p>
+
+            <div class="grid-3">
+                <div class="card card-in-burgundy">
+                    <i class="fa-brands fa-instagram"></i>
+                    <h3>الإنستغرام الرسمي</h3>
+                    <p>أحدث الأخبار، التغطيات، والإعلانات الرسمية للمنصة.</p>
+                    <a href="https://instagram.com/shifra_platform" class="contact-link" target="_blank">@shifra_platform</a>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-brands fa-discord"></i>
+                    <h3>سيرفر الديسكورد</h3>
+                    <p>المجتمع التفاعلي، ورش العمل، وغرف الحوار البرمجية.</p>
+                    <a href="https://discord.com" class="contact-link" target="_blank">انضم إلينا الآن</a>
+                </div>
+                <div class="card card-in-burgundy">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <h3>حساب المسؤول</h3>
+                    <p>للتواصل المباشر والاستفسارات الإدارية والخاصة.</p>
+                    <a href="https://discord.com" class="contact-link" target="_blank">@e4.g</a>
+                </div>
+            </div>
+        </section>
+
     </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة © منصة شفرة | تدار بواسطة فريق بصمة التقني 2026</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>
         new Crate({
