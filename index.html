@@ -10,36 +10,73 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bg-burgundy: #580c10;     /* الأحمر العنابي الأساسي للبوست */
-            --bg-beige: #f4ebd9;        /* البيج الدافيء للخلفيات المتبادلة */
-            --gold-text: #d4af37;       /* الذهبي للنصوص العناوية */
-            --text-dark: #2b0608;       /* العنابي الغامق للنصوص فوق البيج */
-            --text-light: #fbeadb;      /* النص الفاتح فوق العنابي */
+            --bg-burgundy: #580c10;     /* الأحمر العنابي الأساسي */
+            --bg-beige: #f4ebd9;        /* البيج الدافيء */
+            --gold-text: #d4af37;       /* الذهبي للرؤوس */
+            --text-dark: #2b0608;       /* العنابي الغامق للنصوص */
+            --text-light: #fbeadb;      /* النص الفاتح */
             --card-dark: rgba(255, 255, 255, 0.05);
             --card-light: rgba(88, 12, 16, 0.06);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-burgundy); color: var(--text-light); line-height: 1.8; }
+        body { background-color: var(--bg-burgundy); color: var(--text-light); line-height: 1.8; transition: direction 0.3s ease; }
         
-        /* الهيدر الرئيسي */
-        header { text-align: center; padding: 80px 20px; background: linear-gradient(180px, #420609, var(--bg-burgundy)); border-bottom: 3px solid var(--gold-text); }
-        header h1 { font-size: 3.5rem; color: var(--gold-text); font-weight: 900; margin-bottom: 15px; }
-        header p { font-size: 1.3rem; max-width: 800px; margin: 0 auto; opacity: 0.95; }
+        /* شريط التحكم العلوي باللغة */
+        .lang-switcher-bar {
+            max-width: 1100px;
+            margin: 10px auto 0;
+            padding: 0 20px;
+            display: flex;
+            justify-content: flex-end; /* يضع الزر في زاوية الشاشة دائماً */
+        }
+        .lang-btn {
+            background: var(--gold-text);
+            color: var(--text-dark);
+            border: none;
+            padding: 6px 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .lang-btn:hover { background: #fff; color: var(--bg-burgundy); }
 
-        /* حاوية تسجيل الدخول مجهزة بتصميم فخم ومتناسق */
+        /* الهيدر الرئيسي مجهز بنظام ترتيب مرن */
+        header { 
+            text-align: center; 
+            padding: 60px 20px 80px; 
+            background: linear-gradient(180px, #420609, var(--bg-burgundy)); 
+            border-bottom: 3px solid var(--gold-text); 
+        }
+        header h1 { font-size: 3.5rem; color: var(--gold-text); font-weight: 900; margin-bottom: 15px; }
+        
+        /* الحاوية العلوية لزر تسجيل الدخول */
+        #header-top-row {
+            max-width: 1100px;
+            margin: 0 auto 20px;
+            display: flex;
+            /* يوزع الزر لليمين في العربي، وتلقائياً لليسار في الإنجليزي بناءً على الـ dir */
+            justify-content: flex-start; 
+            padding: 0 20px;
+        }
+
         #discord-auth-container {
-            margin: 25px auto;
             min-height: 55px;
             display: flex;
-            justify-content: center;
             align-items: center;
         }
+
+        header p { font-size: 1.3rem; max-width: 800px; margin: 20px auto 0; opacity: 0.95; }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
 
         /* الأقسام ذات الخلفية البيج */
-        .section-beige { background-color: var(--bg-beige); color: var(--text-dark); border-radius: 16px; padding: 40px; margin-bottom: 40px; border-left: 6px solid var(--bg-burgundy); }
+        .section-beige { background-color: var(--bg-beige); color: var(--text-dark); border-radius: 16px; padding: 40px; margin-bottom: 40px; }
+        html[dir="rtl"] .section-beige { border-left: 6px solid var(--bg-burgundy); border-right: none; }
+        html[dir="ltr"] .section-beige { border-right: 6px solid var(--bg-burgundy); border-left: none; }
+        
         .section-beige h2 { color: var(--bg-burgundy); font-size: 2rem; margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid rgba(88,12,16,0.1); padding-bottom: 10px; }
 
         /* الأقسام ذات الخلفية العنابية */
@@ -78,156 +115,68 @@
 </head>
 <body>
 
+    <div class="lang-switcher-bar">
+        <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">English</button>
+    </div>
+
     <header>
-        <h1>منصة شفرة</h1>
-        
-        <div id="discord-auth-container">
-            <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra-platform%2F&scope=identify" 
-               style="background-color: #5865F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); font-family: sans-serif; transition: background 0.3s ease;">
-                <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff" style="display: inline-block; vertical-align: middle;">
-                    <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
-                </svg>
-                تسجيل الدخول عبر الديسكورد
-            </a>
+        <div id="header-top-row">
+            <div id="discord-auth-container">
+                <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra-platform%2F&scope=identify" 
+                   style="background-color: #5865F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); font-family: sans-serif; transition: background 0.3s ease;">
+                    <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff" style="display: inline-block; vertical-align: middle;">
+                        <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
+                    </svg>
+                    <span id="text-login-btn">تسجيل الدخول عبر الديسكورد</span>
+                </a>
+            </div>
         </div>
 
-        <p>الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي والتمكين البرمجي الفعال تحت إدارة فريق بصمة.</p>
+        <h1 id="text-main-title">منصة شفرة</h1>
+        <p id="text-main-desc">الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي والتمكين البرمجي الفعال تحت إدارة فريق بصمة.</p>
     </header>
 
     <div class="container">
 
         <section class="section-beige">
-            <h2><i class="fa-solid fa-circle-info"></i> عن منصة شفرة</h2>
-            <p><strong>منصة شفرة (Shifra Platform):</strong> هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز. نهدف في شفرة إلى كسر حواجز التعلم التقليدية وفتح آفاق جديدة لبناء جيل برمي قادر على مواكبة أحدث التقنيات العالمية وابتكار الحلول الذكية.</p>
-            <p style="margin-top: 15px;">نحن نؤمن بأن البرمجة ليست مجرد كتابة أسطر برمجية، بل هي أداة لتغيير الواقع وصناعة الأثر، ومن هنا جاءت الشراكة الإستراتيجية مع <strong>فريق بصمة</strong> الإداري لتوفير الكفاءة التشغيلية والدعم اللوجستي المستمر.</p>
+            <h2 id="text-about-title"><i class="fa-solid fa-circle-info"></i> عن منصة شفرة</h2>
+            <p id="text-about-p1"><strong>منصة شفرة (Shifra Platform):</strong> هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز. نهدف في شفرة إلى كسر حواجز التعلم التقليدية وفتح آفاق جديدة لبناء جيل برمي قادر على مواكبة أحدث التقنيات العالمية وابتكار الحلول الذكية.</p>
+            <p id="text-about-p2" style="margin-top: 15px;">نحن نؤمن بأن البرمجة ليست مجرد كتابة أسطر برمجية، بل هي أداة لتغيير الواقع وصناعة الأثر، ومن هنا جاءت الشراكة الإستراتيجية مع <strong>فريق بصمة</strong> الإداري لتوفير الكفاءة التشغيلية والدعم اللوجستي المستمر.</p>
         </section>
 
         <section class="section-burgundy">
-            <h2><i class="fa-solid fa-cubes"></i> ركائزنا التقنية والتعليمية</h2>
-            <p>نقوم ببناء مجتمعنا على أسس متينة تضمن استمرار العطاء وتطوير الكفاءات بشكل تصاعدي ومستمر:</p>
+            <h2 id="text-pillars-title"><i class="fa-solid fa-cubes"></i> ركائزنا التقنية والتعليمية</h2>
+            <p id="text-pillars-desc">نقوم ببناء مجتمعنا على أسس متينة تضمن استمرار العطاء وتطوير الكفاءات بشكل تصاعدي ومستمر:</p>
             
             <div class="grid-3">
                 <div class="card card-in-burgundy">
                     <i class="fa-solid fa-users"></i>
-                    <h3>المجتمع التفاعلي</h3>
-                    <p>بيئة حيوية تتيح للمبرمجين مناقشة الأكواد، حل المشكلات البرمجية، وتبادل الخبرات التقنية اليومية.</p>
+                    <h3 id="text-card1-title">المجتمع التفاعلي</h3>
+                    <p id="text-card1-desc">بيئة حيوية تتيح للمبرمجين مناقشة الأكواد، حل المشكلات البرمجية، وتبادل الخبرات التقنية اليومية.</p>
                 </div>
                 <div class="card card-in-burgundy">
                     <i class="fa-solid fa-graduation-cap"></i>
-                    <h3>تطوير المهارات</h3>
-                    <p>مسارات تعليمية وتطبيقية موجهة تسعى لرفع كفاءة الأعضاء من مستويات التأسيس إلى الاحتراف الفعلي.</p>
+                    <h3 id="text-card2-title">تطوير المهارات</h3>
+                    <p id="text-card2-desc">مسارات تعليمية وتطبيقية موجهة تسعى لرفع كفاءة الأعضاء من مستويات التأسيس إلى الاحتراف الفعلي.</p>
                 </div>
                 <div class="card card-in-burgundy">
                     <i class="fa-solid fa-lightbulb"></i>
-                    <h3>المشاريع المبتكرة</h3>
-                    <p>احتضان الأفكار البرمجية المميزة وتحويلها إلى مشاريع حقيقية على أرض الواقع تخدم المجتمع الرقمي.</p>
+                    <h3 id="text-card3-title">المشاريع المبتكرة</h3>
+                    <p id="text-card3-desc">احتضان الأفكار البرمجية المميزة وتحويلها إلى مشاريع حقيقية على أرض الواقع تخدم المجتمع الرقمي.</p>
                 </div>
             </div>
         </section>
 
         <section class="section-beige">
-            <h2><i class="fa-solid fa-id-card"></i> لوحة الكفاءات والمسؤولين</h2>
-            <p>يشرف على إدارة وتطوير وتوجيه المنصة كفاءات بشرية وإدارية تسهر على تقديم أفضل تجربة ممكنة:</p>
+            <h2 id="text-team-title"><i class="fa-solid fa-id-card"></i> لوحة الكفاءات والمسؤولين</h2>
+            <p id="text-team-desc">يشرف على إدارة وتطوير وتوجيه المنصة كفاءات بشرية وإدارية تسهر على تقديم أفضل تجربة ممكنة:</p>
 
             <div class="grid-3">
                 <div class="card card-in-beige">
                     <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminB1" class="member-avatar" alt="الإدارة"></div>
-                    <h3>المسؤول الإداري</h3>
-                    <p>يتولى قيادة العمليات التنظيمية وتوفير الدعم لفريق العمل.</p>
-                    <span class="role-badge badge-admin">إدارة بصمة</span>
+                    <h3 id="text-member1-title">المسؤول الإداري</h3>
+                    <p id="text-member1-desc">يتولى قيادة العمليات التنظيمية وتوفير الدعم لفريق العمل.</p>
+                    <span class="role-badge badge-admin" id="text-member1-badge">إدارة بصمة</span>
                 </div>
                 <div class="card card-in-beige">
-                    <div class="avatar-container"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=DevB2" class="member-avatar" alt="المطور"></div>
-                    <h3>المطوّر المتميز</h3>
-                    <p>المسؤول عن البنية البرمجية وضمان جودة الأكواد في المنصة.</p>
-                    <span class="role-badge badge-dev">مبرمجي شفرة</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-burgundy">
-            <h2><i class="fa-solid fa-paper-plane"></i> قنوات التواصل والتقديم الرسمية</h2>
-            <p>تابع منصة شفرة عبر المنصات الرسمية لتكون أول من يعلم بالورش والفعاليات والمشاريع القادمة:</p>
-
-            <div class="grid-3">
-                <div class="card card-in-burgundy">
-                    <i class="fa-brands fa-instagram"></i>
-                    <h3>الإنستغرام الرسمي</h3>
-                    <p>أحدث الأخبار، التغطيات، والإعلانات الرسمية للمنصة.</p>
-                    <a href="https://instagram.com/shifra_platform" class="contact-link" target="_blank">@shifra_platform</a>
-                </div>
-                <div class="card card-in-burgundy">
-                    <i class="fa-brands fa-discord"></i>
-                    <h3>سيرفر الديسكورد</h3>
-                    <p>المجتمع التفاعلي، ورش العمل، وغرف الحوار البرمجية.</p>
-                    <a href="https://discord.com" class="contact-link" target="_blank">انضم إلينا الآن</a>
-                </div>
-                <div class="card card-in-burgundy">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <h3>حساب المسؤول</h3>
-                    <p>للتواصل المباشر والاستفسارات الإدارية والخاصة.</p>
-                    <a href="https://discord.com" class="contact-link" target="_blank">@e4.g</a>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <footer>
-        <p>جميع الحقوق محفوظة © منصة شفرة | تدار بواسطة فريق بصمة التقني 2026</p>
-    </footer>
-
-    <iframe src="https://e.widgetbot.io/channels/1123271495066599495/1507886769247355032" 
-            allow="clipboard-write; gamepad; microphone; geolocation; encrypted-media; fullscreen; picture-in-picture; computer-info; camera; interest-cohort" 
-            style="position: fixed; bottom: 20px; right: 20px; width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 99999;">
-    </iframe>
-
-    <script>
-    (function() {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        let accessToken = fragment.get('access_token');
-        
-        if (!accessToken) {
-            accessToken = localStorage.getItem('discord_token');
-        }
-
-        if (accessToken) {
-            localStorage.setItem('discord_token', accessToken);
-            if (window.location.hash.includes('access_token')) {
-                window.history.replaceState(null, null, window.location.pathname + window.location.search);
-            }
-
-            fetch('https://discord.com/api/users/@me', {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Token expired');
-                return res.json();
-            })
-            .then(response => {
-                const { username, avatar, id } = response;
-                const container = document.getElementById('discord-auth-container');
-                
-                const avatarURL = avatar 
-                    ? `https://cdn.discordapp.com/avatars/${id}/${avatar}.png` 
-                    : `https://cdn.discordapp.com/embed/avatars/0.png`;
-
-                container.innerHTML = `
-                    <div style="display: inline-flex; align-items: center; gap: 12px; background: #1a1a1a; padding: 10px 20px; border-radius: 50px; border: 2px solid #5865F2; box-shadow: 0 4px 15px rgba(0,0,0,0.2); direction: rtl; max-width: 300px; margin: 0 auto;">
-                        <img src="${avatarURL}" alt="${username}" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #fff;">
-                        <span style="color: #fff; font-weight: bold; font-size: 15px;">مرحباً بك، ${username} 👋</span>
-                        <button onclick="localStorage.removeItem('discord_token'); location.reload();" style="background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; margin-right: 15px; transition: 0.3s; white-space: nowrap;">خروج</button>
-                    </div>
-                `;
-            })
-            .catch(err => {
-                console.error("انتهت صلاحية الجلسة أو حدث خطأ:", err);
-                localStorage.removeItem('discord_token');
-            });
-        }
-    })();
-    </script>
-</body>
-</html>
+                    <div class="avatar-container"><img src="https://
