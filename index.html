@@ -10,42 +10,35 @@
 </head>
 <body>
 
-    <h1 id="main-title">منصة شفرة</h1>
-    <div id="content">جاري المعالجة...</div>
+    <h1 id="title">منصة شفرة</h1>
+    <div id="auth-area">جاري التحقق...</div>
 
     <script>
-        const content = document.getElementById('content');
+        const authArea = document.getElementById('auth-area');
 
-        // 1. إذا كان الرابط يحتوي على توكن، احفظه في الذاكرة وامسح الرابط
-        if (window.location.hash.includes("access_token")) {
-            const params = new URLSearchParams(window.location.hash.substring(1));
-            localStorage.setItem('discord_token', params.get('access_token'));
-            window.location.href = window.location.pathname; // إعادة تحميل الصفحة بدون الـ hash
+        function login() {
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify";
         }
 
-        // 2. إذا كان لدينا توكن مخزن، نستخدمه
-        const token = localStorage.getItem('discord_token');
+        // قراءة التوكن من الـ hash مباشرة دون إعادة تحميل
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
 
         if (token) {
+            // جلب بيانات المستخدم
             fetch('https://discord.com/api/users/@me', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             .then(res => res.json())
             .then(user => {
-                if (user.username) {
-                    content.innerHTML = `<div class="user-box">أهلاً بك ${user.username} 👋</div>`;
-                } else {
-                    localStorage.removeItem('discord_token'); // التوكن منتهي
-                    location.reload();
-                }
+                authArea.innerHTML = `<div class="user-box">أهلاً بك يا ${user.username} 👋</div>`;
             })
             .catch(() => {
-                localStorage.removeItem('discord_token');
-                location.reload();
+                authArea.innerHTML = `<button onclick="login()" style="padding:10px; cursor:pointer;">خطأ في الجلسة، سجل الدخول مجدداً</button>`;
             });
         } else {
-            // 3. إذا لم يوجد توكن، إظهار زر الدخول
-            content.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white; font-weight:bold;">تسجيل الدخول عبر ديسكورد</a>`;
+            authArea.innerHTML = `<button onclick="login()" style="padding:10px; cursor:pointer;">تسجيل الدخول عبر ديسكورد</button>`;
         }
     </script>
 </body>
