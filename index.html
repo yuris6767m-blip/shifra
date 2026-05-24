@@ -14,7 +14,13 @@
 
     <div class="top-control-bar">
         <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">English</button>
+        <div class="lang-btn-wrapper">
+            <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLangMenu()">🌐 Language</button>
+            <div class="lang-dropdown" id="lang-dropdown">
+                <button onclick="selectLanguage('ar')">🇸🇦 العربية</button>
+                <button onclick="selectLanguage('en')">🇺🇸 English</button>
+            </div>
+        </div>
     </div>
 
     <div id="sidebar">
@@ -22,7 +28,7 @@
         <h3 class="sidebar-title" id="text-sidebar-title">قائمة المنصة</h3>
         
         <div id="discord-auth-container">
-            <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify">
+            <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify%20guilds.members.read">
                 <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff">
                     <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
                 </svg>
@@ -31,8 +37,8 @@
         </div>
 
         <div class="sidebar-links">
-            <a href="#" class="sidebar-item" onclick="secureLink('لوحة المبرمجين')" id="link-dev-panel">لوحة المبرمجين</a>
-            <a href="#" class="sidebar-item" onclick="secureLink('الجوائز والترقيات')" id="link-awards">الجوائز والترقيات</a>
+            <a href="#" class="sidebar-item" onclick="secureLink('لوحة المبرمجين', ['مبرمج','مطور','إداري','مالك'])" id="link-dev-panel">لوحة المبرمجين</a>
+            <a href="#" class="sidebar-item" onclick="secureLink('الجوائز والترقيات', ['عضو','متعلم','مبرمج','مطور','إداري','مالك','صديق'])" id="link-awards">الجوائز والترقيات</a>
         </div>
     </div>
 
@@ -45,7 +51,7 @@
 
         <section class="section-beige">
             <h2 id="text-about-title"><i class="fa-solid fa-circle-info"></i> عن منصة شفرة</h2>
-            <p id="text-about-p1"><strong>منصة شفرة (Shifra Platform):</strong> هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز. نهدف في شفرة إلى كسر حواجز التعلم التقليدية وفتح آفاق جديدة لبناء جيل برمي قادر على مواكبة أحدث التقنيات العالمية وابتكار الحلول الذكية.</p>
+            <p id="text-about-p1"><strong>منصة شفرة (Shifra Platform):</strong> هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز. نهدف في شفرة إلى كسر حواجز التعلم التقليدية وفتح آفاق جديدة لبناء جيل برمجي قادر على مواكبة أحدث التقنيات العالمية وابتكار الحلول الذكية.</p>
             <p id="text-about-p2" style="margin-top: 15px;">نحن نؤمن بأن البرمجة ليست مجرد كتابة أسطر برمجية، بل هي أداة لتغيير الواقع وصناعة الأثر، ومن هنا جاءت الشراكة الإستراتيجية مع <strong>فريق بصمة</strong> الإداري لتوفير الكفاءة التشغيلية والدعم اللوجستي المستمر.</p>
         </section>
 
@@ -101,6 +107,7 @@
                     <i class="fa-brands fa-instagram"></i>
                     <h3 id="text-social1-title">الإنستغرام الرسمي</h3>
                     <p id="text-social1-desc">أحدث الأخبار، التغطيات، والإعلانات الرسمية للمنصة.</p>
+                    <a href="https://instagram.com/shifra_platform" target="_blank" class="contact-link">@shifra_platform</a>
                 </div>
                 <div class="card card-in-burgundy">
                     <i class="fa-brands fa-discord"></i>
