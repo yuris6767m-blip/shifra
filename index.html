@@ -4,85 +4,32 @@
     <meta charset="UTF-8">
     <title>منصة شفرة</title>
     <style>
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: #580c10; color: white; transition: 0.3s; }
-        
-        /* االقائمة العلوية */
-        nav { display: flex; justify-content: space-between; padding: 20px; background: #3c090a; align-items: center; }
-        .menu-btn { cursor: pointer; font-size: 28px; }
-        
-        /* الواجهة الرئيسيةا */
-        .main-content { padding: 100px 20px; text-align: center; }
-        h1 { font-size: 3em; margin-bottom: 10px; }
-
-        /* القائمة الجانبية (Sidebar) */
-        #sidebar { position: fixed; right: -250px; top: 0; width: 250px; height: 100%; background: #222; padding: 20px; transition: 0.3s; box-shadow: -2px 0 10px rgba(0,0,0,0.5); z-index: 1000; }
-        #sidebar.open { right: 0; }
-        
-        .nav-link { display: block; color: #d4af37; padding: 15px 0; text-decoration: none; border-bottom: 1px solid #444; font-weight: bold; }
-        .login-btn { background: #d4af37; color: #580c10; padding: 10px; border-radius: 5px; text-align: center; display: block; margin-top: 20px; cursor: pointer; }
+        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
     </style>
 </head>
 <body>
-
-<nav>
-    <div style="font-weight:bold; font-size: 1.2em;">منصة شفرة</div>
-    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
-</nav>
-
-<div id="sidebar">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3>القائمة</h3>
-        <span onclick="toggleSidebar()" style="cursor:pointer;">✕</span>
-    </div>
-    
-    <div id="auth-area">
-        <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-btn">تسجيل الدخول عبر ديسكورد</a>
-    </div>
-    
-    <a href="#" class="nav-link" onclick="secureAction()">لوحة المبرمجين</a>
-    <a href="#" class="nav-link" onclick="logout()">تسجيل الخروج</a>
-</div>
-
-<div class="main-content">
     <h1>منصة شفرة</h1>
     <p>الحاضنة التقنية الأولى للمبرمج العربي.</p>
-</div>
+    <div id="content">جاري التحقق...</div>
 
-<script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-    }
-
-    // التحقق عند العودة من ديسكورد
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    const token = params.get('access_token');
-    if (token) {
-        localStorage.setItem('user_token', token);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // تحديث الواجهة بناءً على حالة الدخول
-    const savedToken = localStorage.getItem('user_token');
-    if (savedToken) {
-        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${savedToken}` } })
-        .then(res => res.json())
-        .then(user => {
-            document.getElementById('auth-area').innerHTML = `<div style="color:gold;">مرحباً ${user.username} 👋</div>`;
-        });
-    }
-
-    function secureAction() {
-        if (!localStorage.getItem('user_token')) {
-            alert("⚠️ يتوجب عليك تسجيل الدخول أولاً!");
-        } else {
-            alert("جارٍ الانتقال للوحة التحكم...");
+    <script>
+        // هذا الكود بسيط جداً ولا يمسح شيئاً
+        const content = document.getElementById('content');
+        
+        // جرب تسجيل الدخول
+        content.innerHTML = '<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold;">اضغط هنا لتسجيل الدخول</a>';
+        
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        const token = params.get('access_token');
+        
+        if (token) {
+            content.innerHTML = "تم استلام البيانات... جاري العرض";
+            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(user => {
+                content.innerHTML = "مرحباً " + user.username;
+            });
         }
-    }
-
-    function logout() {
-        localStorage.removeItem('user_token');
-        location.reload();
-    }
-</script>
+    </script>
 </body>
 </html>
