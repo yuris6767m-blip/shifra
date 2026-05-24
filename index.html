@@ -5,68 +5,74 @@
     <title>منصة شفرة</title>
     <style>
         body { margin: 0; font-family: sans-serif; background: #580c10; color: white; }
+        
         /* القائمة العلوية */
         nav { display: flex; justify-content: space-between; padding: 20px; background: #3c090a; align-items: center; }
-        .menu-btn { cursor: pointer; font-size: 24px; }
-        /* القائمة الجانبية (مخفية) */
-        #sidebar { display: none; position: fixed; right: 0; top: 0; width: 250px; height: 100%; background: #222; padding: 20px; }
-        .main-content { padding: 50px; text-align: center; }
         .login-btn { background: #d4af37; padding: 10px 20px; color: black; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        
+        /* القائمة الجانبية */
+        #sidebar { display: none; position: fixed; right: 0; top: 0; width: 250px; height: 100%; background: #222; padding: 20px; box-shadow: -2px 0 5px rgba(0,0,0,0.5); }
+        .menu-btn { cursor: pointer; font-size: 24px; display: none; }
+
+        /* المحتوى العام */
+        .main-content { padding: 50px; text-align: center; }
     </style>
 </head>
 <body>
 
 <nav>
     <div>منصة شفرة</div>
-    <div id="auth-nav">
+    <div>
         <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-btn">تسجيل الدخول</a>
-        <span id="menu-icon" class="menu-btn" onclick="toggleSidebar()" style="display:none;">☰</span>
+        <span id="menu-icon" class="menu-btn" onclick="toggleSidebar()">☰</span>
     </div>
 </nav>
 
 <div id="sidebar">
-    <h2 id="user-name">مرحباً</h2>
+    <h2 id="user-name">...</h2>
     <hr>
-    <p>الرتبة: <span id="user-role">عضو</span></p>
-    <p>الجوائز والترقيات ستظهر هنا</p>
+    <p>لوحة التحكم</p>
     <button onclick="logout()">تسجيل خروج</button>
 </div>
 
 <div class="main-content">
-    <h1>مرحباً بك في المنصة</h1>
-    <p>هذه الواجهة معروضة للجميع.</p>
+    <h1>مرحباً بك في منصة شفرة</h1>
+    <p>هذه الواجهة العامة للجميع.</p>
 </div>
 
 <script>
-    function toggleSidebar() {
-        const side = document.getElementById('sidebar');
-        side.style.display = side.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function logout() {
-        localStorage.removeItem('user_token');
-        location.reload();
-    }
-
-    // التحقق التلقائي
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
+    // 1. معالجة التوكن عند العودة من ديسكورد
+    const params = new URLSearchParams(window.location.hash.substring(1));
     const token = params.get('access_token');
-
     if (token) {
         localStorage.setItem('user_token', token);
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 
+    // 2. التحقق من المستخدم وتحديث الواجهة
     const savedToken = localStorage.getItem('user_token');
     if (savedToken) {
         fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${savedToken}` } })
         .then(res => res.json())
         .then(user => {
-            document.getElementById('login-link').style.display = 'none';
-            document.getElementById('menu-icon').style.display = 'block';
-            document.getElementById('user-name').innerText = "مرحباً " + user.username;
+            if (user.username) {
+                document.getElementById('login-link').style.display = 'none';
+                document.getElementById('menu-icon').style.display = 'block';
+                document.getElementById('user-name').innerText = "مرحباً " + user.username;
+            } else {
+                logout(); // توكن منتهي
+            }
         });
+    }
+
+    function toggleSidebar() {
+        const side = document.getElementById('sidebar');
+        side.style.display = (side.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function logout() {
+        localStorage.removeItem('user_token');
+        location.reload();
     }
 </script>
 </body>
