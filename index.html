@@ -5,40 +5,44 @@
     <title>منصة شفرة</title>
     <style>
         body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
-        .user-box { background: #d4af37; color: #580c10; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; }
+        .box { background: #d4af37; color: #580c10; padding: 20px; border-radius: 10px; display: inline-block; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1 id="title">منصة شفرة</h1>
-    <div id="auth-status">جاري التحقق...</div>
+    <h1 id="status">جاري التحقق من الدخول...</h1>
+    <div id="result"></div>
 
     <script>
-        const authStatus = document.getElementById('auth-status');
-        
-        // التحقق من وجود توكن في الرابط
-        if (window.location.hash) {
-            const params = new URLSearchParams(window.location.hash.substring(1));
-            const token = params.get('access_token');
+        // 1. استخراج التوكن بطريقة أكثر قوة
+        const fragment = new URLSearchParams(window.location.hash.substring(1));
+        const token = fragment.get('access_token');
 
-            if (token) {
-                // جلب البيانات من ديسكورد
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(user => {
-                    authStatus.innerHTML = `<div class="user-box">مرحباً ${user.username} 👋</div>`;
-                    // تنظيف الرابط من التوكن بعد استخدامه لحماية خصوصيتك
-                    window.history.replaceState(null, null, window.location.pathname);
-                })
-                .catch(() => {
-                    authStatus.innerHTML = "حدث خطأ، يرجى المحاولة لاحقاً.";
-                });
-            }
+        if (token) {
+            // 2. إذا وجدنا توكن، نرسله لـ ديسكورد
+            fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+                if (user.username) {
+                    document.getElementById('status').innerText = "تم الدخول بنجاح";
+                    document.getElementById('result').innerHTML = `<div class="box">مرحباً بك يا ${user.username}</div>`;
+                } else {
+                    document.getElementById('status').innerText = "فشل التحقق من الحساب";
+                }
+            })
+            .catch(err => {
+                document.getElementById('status').innerText = "خطأ في الاتصال: " + err;
+            });
         } else {
-            // إذا لم يكن هناك توكن، أظهر زر تسجيل الدخول
-            authStatus.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold; font-weight:bold;">تسجيل الدخول عبر الديسكورد</a>`;
+            // 3. إذا لم يوجد توكن، إظهار زر الدخول بشكل مباشر
+            document.getElementById('status').innerText = "تحتاج لتسجيل الدخول";
+            document.getElementById('result').innerHTML = `
+                <a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" 
+                   style="background:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
+                   تسجيل الدخول عبر ديسكورد
+                </a>`;
         }
     </script>
 </body>
