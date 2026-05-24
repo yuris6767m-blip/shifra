@@ -5,39 +5,31 @@
     <title>منصة شفرة</title>
     <style>
         body { margin: 0; font-family: sans-serif; background: #580c10; color: white; transition: 0.3s; }
-        
-        /* القائمة العلوية */
-        .top-nav { display: flex; justify-content: space-between; padding: 20px; background: #3c090a; align-items: center; }
-        .menu-btn { cursor: pointer; font-size: 30px; color: gold; }
-        
-        /* التصميم الجمالي (الواجهة) */
-        .hero { text-align: center; padding: 50px 20px; }
-        .card { background: #fdf6e3; color: #333; margin: 40px auto; padding: 40px; border-radius: 15px; max-width: 800px; text-align: right; }
+        .hero { text-align: center; padding: 50px; }
+        .card { background: #fdf6e3; color: #333; margin: 20px auto; padding: 30px; border-radius: 15px; max-width: 800px; text-align: right; }
         [dir="ltr"] .card { text-align: left; }
         
-        /* القائمة الجانبية */
-        #sidebar { position: fixed; top: 0; width: 250px; height: 100%; background: #3c090a; padding: 20px; transition: 0.3s; z-index: 1000; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        /* القائمة الجانبية (تم إضافتها فقط) */
+        #sidebar { position: fixed; top: 0; width: 250px; height: 100%; background: #3c090a; padding: 20px; transition: 0.3s; z-index: 1000; }
         [dir="rtl"] #sidebar { right: -250px; }
         [dir="rtl"] #sidebar.open { right: 0; }
         [dir="ltr"] #sidebar { left: -250px; }
         [dir="ltr"] #sidebar.open { left: 0; }
-        
-        .side-link { display: block; color: gold; padding: 15px 0; text-decoration: none; border-bottom: 1px solid #580c10; }
+        .nav-btn { cursor: pointer; padding: 10px; background: gold; border: none; margin: 5px; }
     </style>
 </head>
 <body>
 
-<div class="top-nav">
-    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
-    <button onclick="toggleLang()" style="cursor:pointer; background:#580c10; color:white; border:1px solid gold; padding:5px 10px;">English / العربية</button>
+<div id="sidebar">
+    <button onclick="toggleSidebar()">✕</button>
+    <h3 id="side-title">القائمة</h3>
+    <div id="auth-box"><a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify">تسجيل الدخول</a></div>
 </div>
 
-<div id="sidebar">
-    <h3 style="color:gold;" id="s-menu">القائمة</h3>
-    <div id="auth-box"><a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="side-link" id="s-login">تسجيل الدخول</a></div>
-    <a href="#" class="side-link" id="s-panel">لوحة التحكم</a>
-    <button onclick="toggleSidebar()" style="margin-top:20px; cursor:pointer;">✕</button>
-</div>
+<nav style="padding:20px;">
+    <button class="nav-btn" onclick="toggleSidebar()">☰</button>
+    <button class="nav-btn" onclick="toggleLang()">English / العربية</button>
+</nav>
 
 <div class="hero">
     <h1 id="txt-title">منصة شفرة</h1>
@@ -50,44 +42,33 @@
 </div>
 
 <script>
+    // نظام اللغات
     const lang = {
-        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي والتمكين البرمجي الفعال.", about: "عن منصة شفرة", body: "منصة شفرة: هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز.", menu: "القائمة", login: "تسجيل الدخول", panel: "لوحة التحكم" },
-        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", about: "About Shifra", body: "Shifra Platform is an integrated digital environment established to be the safe haven for every Arab developer.", menu: "Menu", login: "Login", panel: "Dashboard" }
+        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي والتمكين البرمجي الفعال.", about: "عن منصة شفرة", body: "منصة شفرة: هي بيئة رقمية وتفاعلية متكاملة، تأسست لتكون المرجع والملاذ الآمن لكل مبرمج ومطور عربي يسعى للتميز.", menu: "القائمة" },
+        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", about: "About Shifra", body: "Shifra Platform is an integrated digital environment established to be the safe haven for every Arab developer.", menu: "Menu" }
     };
-
     let currentLang = localStorage.getItem('lang') || 'ar';
-
     function updateUI() {
         document.getElementById('txt-title').innerText = lang[currentLang].title;
         document.getElementById('txt-desc').innerText = lang[currentLang].desc;
         document.getElementById('txt-about').innerText = lang[currentLang].about;
         document.getElementById('txt-body').innerText = lang[currentLang].body;
-        document.getElementById('s-menu').innerText = lang[currentLang].menu;
-        document.getElementById('s-login').innerText = lang[currentLang].login;
-        document.getElementById('s-panel').innerText = lang[currentLang].panel;
+        document.getElementById('side-title').innerText = lang[currentLang].menu;
         document.getElementById('html-root').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     }
-
-    function toggleLang() {
-        currentLang = currentLang === 'ar' ? 'en' : 'ar';
-        localStorage.setItem('lang', currentLang);
-        updateUI();
-    }
-
+    function toggleLang() { currentLang = currentLang === 'ar' ? 'en' : 'ar'; localStorage.setItem('lang', currentLang); updateUI(); }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
-    // جلب بيانات الديسكورد
+    
+    // منطق الدخول (تم وضعه في النهاية لضمان عدم التأثير على التصميم)
     const params = new URLSearchParams(window.location.hash.substring(1));
     const token = params.get('access_token');
     if (token) { localStorage.setItem('t', token); window.history.replaceState({}, document.title, window.location.pathname); }
-    
     const t = localStorage.getItem('t');
     if (t) {
         fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${t}` } })
         .then(r => r.json())
-        .then(u => { if(u.username) document.getElementById('auth-box').innerHTML = `<div style="color:white; padding:15px 0;">مرحباً ${u.username}</div>`; });
+        .then(u => { if(u.username) document.getElementById('auth-box').innerText = "مرحباً " + u.username; });
     }
-
     updateUI();
 </script>
 </body>
