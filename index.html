@@ -2,40 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة شفرة - تصحيح</title>
+    <title>منصة شفرة</title>
     <style>
         body { background: #580c10; color: white; text-align: center; padding: 50px; font-family: sans-serif; }
-        .box { background: #d4af37; padding: 20px; border-radius: 10px; color: #580c10; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <h1>منصة شفرة</h1>
-    <div id="debug-area">
-        <button onclick="checkAuth()" style="padding:15px; cursor:pointer;">اضغط هنا للتحقق من هويتك</button>
-    </div>
+    <h1 id="msg">جاري التحقق...</h1>
 
     <script>
-        function checkAuth() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
+        // دالة لجلب التوكن سواء كان في hash أو في query
+        function getToken() {
+            let hash = window.location.hash.substring(1);
+            let search = window.location.search.substring(1);
+            let params = new URLSearchParams(hash || search);
+            return params.get('access_token');
+        }
 
-            if (!token) {
-                alert("لا يوجد توكن في الرابط! سجل الدخول أولاً.");
-                return;
-            }
+        const token = getToken();
 
+        if (token) {
             fetch('https://discord.com/api/users/@me', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             .then(res => res.json())
             .then(user => {
-                document.getElementById('debug-area').innerHTML = `<div class="box">أهلاً بك يا ${user.username}</div>`;
+                document.getElementById('msg').innerHTML = `أهلاً بك يا ${user.username} 👋`;
+                // تنظيف الرابط نهائياً لمنع أي مشاكل
+                window.history.replaceState({}, document.title, window.location.pathname);
             })
-            .catch(err => {
-                alert("خطأ في الاتصال: " + err);
+            .catch(() => {
+                document.getElementById('msg').innerText = "حدث خطأ في الاتصال، حاول مجدداً.";
             });
+        } else {
+            document.getElementById('msg').innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold;">اضغط هنا لتسجيل الدخول</a>`;
         }
     </script>
 </body>
