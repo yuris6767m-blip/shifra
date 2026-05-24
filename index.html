@@ -5,45 +5,49 @@
     <title>منصة شفرة</title>
     <style>
         body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
-        .user-box { background: #d4af37; color: #580c10; padding: 15px; border-radius: 10px; display: inline-block; font-weight: bold; }
-        .login-link { color: gold; font-weight: bold; text-decoration: none; font-size: 1.2em; }
+        .user-box { background: #d4af37; color: #580c10; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; margin-bottom: 20px; }
+        .login-btn { color: gold; font-weight: bold; text-decoration: none; font-size: 1.2em; }
     </style>
 </head>
 <body>
 
     <h1 id="main-title">منصة شفرة</h1>
-    <div id="app">جاري المعالجة...</div>
+    <p>الحاضنة التقنية الأولى للمبرمج العربي.</p>
+
+    <div id="auth-container">
+        <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-btn">
+            تسجيل الدخول عبر ديسكورد
+        </a>
+    </div>
 
     <script>
-        // دالة لجلب البيانات مباشرة دون تدخل منك
-        function init() {
-            const app = document.getElementById('app');
+        window.onload = function() {
+            const authContainer = document.getElementById('auth-container');
+            const loginLink = document.getElementById('login-link');
+            
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
             const token = params.get('access_token');
 
             if (token) {
-                // جلب بيانات المستخدم
+                // إخفاء زر الدخول
+                loginLink.style.display = 'none';
+                authContainer.innerText = "جاري التحقق...";
+
                 fetch('https://discord.com/api/users/@me', {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 .then(res => res.json())
                 .then(user => {
-                    app.innerHTML = `<div class="user-box">أهلاً بك يا ${user.username} 👋</div>`;
-                    // مسح الـ Token من الرابط فورياً ليبقى الرابط نظيفاً
+                    // عرض الترحيب داخل الصندوق دون مسح العنوان أو الوصف
+                    authContainer.innerHTML = `<div class="user-box">أهلاً بك يا ${user.username} 👋</div>`;
                     window.history.replaceState({}, document.title, window.location.pathname);
                 })
                 .catch(() => {
-                    app.innerHTML = "حدث خطأ، يرجى المحاولة لاحقاً.";
+                    authContainer.innerHTML = "حدث خطأ في جلب البيانات.";
                 });
-            } else {
-                // عرض رابط تسجيل الدخول
-                app.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-link">تسجيل الدخول عبر ديسكورد</a>`;
             }
-        }
-
-        // تشغيل الدالة فور تحميل الصفحة
-        window.onload = init;
+        };
     </script>
 </body>
 </html>
