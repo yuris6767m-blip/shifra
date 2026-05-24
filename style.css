@@ -1,0 +1,180 @@
+:root {
+    --bg-burgundy: #580c10;     /* الأحمر العنابي الأساسي */
+    --bg-beige: #f4ebd9;        /* البيج الدافيء */
+    --gold-text: #d4af37;       /* الذهبي للرؤوس */
+    --text-dark: #2b0608;       /* العنابي الغامق للنصوص */
+    --text-light: #fbeadb;      /* النص الفاتح */
+    --card-dark: rgba(255, 255, 255, 0.05);
+    --card-light: rgba(88, 12, 16, 0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background-color: var(--bg-burgundy); color: var(--text-light); line-height: 1.8; transition: direction 0.3s ease; }
+
+/* شريط التحكم العلوي المحدث بـ ☰ وزر اللغة */
+.top-control-bar {
+    max-width: 1100px;
+    margin: 10px auto 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.menu-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--gold-text);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.menu-toggle-btn:hover { color: #fff; }
+
+.lang-btn {
+    background: var(--gold-text);
+    color: var(--text-dark);
+    border: none;
+    padding: 6px 14px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+.lang-btn:hover { background: #fff; color: var(--bg-burgundy); }
+
+/* القائمة الجانبية الاحترافية المتغيرة حسب الاتجاه */
+#sidebar {
+    position: fixed;
+    top: 0;
+    width: 280px;
+    height: 100%;
+    background: #2b0608;
+    border-left: 2px solid var(--gold-text);
+    border-right: 2px solid var(--gold-text);
+    padding: 30px 20px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999999;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+}
+/* ضبط جهة القائمة حسب اتجاه الصفحة */
+html[dir="rtl"] #sidebar { right: 0; transform: translateX(100%); left: auto; }
+html[dir="ltr"] #sidebar { left: 0; transform: translateX(-100%); right: auto; }
+html[dir="rtl"] #sidebar.open { transform: translateX(0); }
+html[dir="ltr"] #sidebar.open { transform: translateX(0); }
+
+.sidebar-close {
+    background: none;
+    border: none;
+    color: var(--gold-text);
+    font-size: 1.4rem;
+    cursor: pointer;
+    float: left;
+}
+html[dir="ltr"] .sidebar-close { float: right; }
+
+.sidebar-title { color: var(--gold-text); font-weight: 700; margin-bottom: 30px; font-size: 1.5rem; clear: both; padding-top: 10px;}
+
+#discord-auth-container {
+    min-height: 55px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+#sidebar #login-btn {
+    background-color: #5865F2; 
+    color: white; 
+    padding: 12px 20px; 
+    border-radius: 8px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 10px; 
+    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); 
+    font-family: sans-serif; 
+    transition: background 0.3s ease; 
+    width: 100%; 
+    justify-content: center; 
+    font-size: 0.9rem;
+}
+
+.sidebar-links { display: flex; flex-direction: column; gap: 15px; }
+.sidebar-item {
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(214,175,55,0.1);
+    font-weight: 600;
+    transition: 0.3s;
+}
+.sidebar-item:hover { background: var(--gold-text); color: var(--text-dark); }
+
+/* الهيدر الرئيسي */
+header { 
+    text-align: center; 
+    padding: 40px 20px 80px; 
+    background: linear-gradient(180deg, #420609, var(--bg-burgundy)); 
+    border-bottom: 3px solid var(--gold-text); 
+}
+header h1 { font-size: 3.5rem; color: var(--gold-text); font-weight: 900; margin-bottom: 15px; }
+header p { font-size: 1.3rem; max-width: 800px; margin: 20px auto 0; opacity: 0.95; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+/* الأقسام ذات الخلفية البيج الأصلي */
+.section-beige { background-color: var(--bg-beige); color: var(--text-dark); border-radius: 16px; padding: 40px; margin-bottom: 40px; }
+html[dir="rtl"] .section-beige { border-left: 6px solid var(--bg-burgundy); border-right: none; }
+html[dir="ltr"] .section-beige { border-right: 6px solid var(--bg-burgundy); border-left: none; }
+.section-beige h2 { color: var(--bg-burgundy); font-size: 2rem; margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid rgba(88,12,16,0.1); padding-bottom: 10px; }
+
+/* الأقسام ذات الخلفية العنابية الأصلي */
+.section-burgundy { background-color: rgba(0, 0, 0, 0.15); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 40px; margin-bottom: 40px; }
+.section-burgundy h2 { color: var(--gold-text); font-size: 2rem; margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid rgba(212,175,55,0.1); padding-bottom: 10px; }
+
+/* كروت الميزات والكفاءات */
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 25px; }
+.card { padding: 30px; border-radius: 12px; text-align: center; transition: transform 0.3s; }
+.card:hover { transform: translateY(-5px); }
+.card-in-beige { background: var(--card-light); border: 1px solid rgba(88,12,16,0.1); }
+.card-in-burgundy { background: var(--card-dark); border: 1px solid rgba(255,255,255,0.05); }
+
+.card i { font-size: 2.5rem; margin-bottom: 15px; }
+.card-in-beige i { color: var(--bg-burgundy); }
+.card-in-burgundy i { color: var(--gold-text); }
+.card h3 { margin-bottom: 10px; font-size: 1.4rem; }
+
+/* لوحة الأعضاء */
+.avatar-container { width: 100px; height: 100px; margin: 0 auto 15px; }
+.member-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold-text); background: #1a1a1a; }
+.role-badge { display: inline-block; padding: 4px 14px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-top: 12px; color: white; }
+.badge-admin { background: #a61c22; }
+.badge-dev { background: #2c3e50; }
+
+/* أزرار التواصل */
+.contact-link { display: inline-block; margin-top: 15px; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; }
+.card-in-beige .contact-link { background: var(--bg-burgundy); color: var(--bg-beige); }
+.card-in-beige .contact-link:hover { background: #420609; }
+.card-in-burgundy .contact-link { background: var(--gold-text); color: var(--text-dark); }
+.card-in-burgundy .contact-link:hover { background: #bd9a2b; }
+
+footer { text-align: center; padding: 40px; font-size: 0.9rem; opacity: 0.7; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 50px; }
+
+/* أداة ديسكورد التفاعلية المحمية */
+.discord-widget {
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    width: 350px; 
+    height: 500px; 
+    border: none; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
+    z-index: 99999;
+}
+html[dir="ltr"] .discord-widget {
+    right: auto;
+    left: 20px;
+}
