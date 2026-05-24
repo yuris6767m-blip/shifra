@@ -6,77 +6,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #580c10; --gold: #d4af37; --bg: #f4ebd9; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; }
-        .navbar { display: flex; justify-content: space-between; padding: 20px; background: var(--main); color: white; align-items: center; }
-        .user-panel { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 5px 15px; border-radius: 50px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); }
-        .content { padding: 40px; text-align: center; }
-        .badge { background: var(--gold); padding: 5px 10px; border-radius: 5px; font-size: 0.8em; margin: 5px; }
+        body { font-family: 'Cairo', sans-serif; background: var(--main); color: white; margin: 0; padding: 20px; text-align: center; }
+        .nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: auto; }
+        .user-box { background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .content { margin-top: 50px; }
+        .badge { display: inline-block; background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="navbar">
-    <button onclick="toggleLang()" id="lang-btn">English</button>
-    <div id="auth-box">
-        <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">تسجيل الدخول</a>
-    </div>
+<div class="nav">
+    <button onclick="toggleLang()" id="btn-lang" style="cursor:pointer; padding:5px 15px;">English</button>
+    <div id="user-area"></div>
 </div>
 
 <div class="content">
-    <h1 id="txt-title">مرحباً بك في منصة شفرة</h1>
-    <div id="user-info" style="display:none;">
-        <img id="user-avatar" class="avatar" src="">
-        <h2 id="user-name"></h2>
-        <div id="user-roles">
-            <span class="badge" id="role-member">عضو</span>
-            <span class="badge" id="role-dev" style="display:none;">مبرمج</span>
-        </div>
+    <h1 id="txt-title">منصة شفرة</h1>
+    <p id="txt-desc">الحاضنة التقنية الأولى للمبرمج العربي.</p>
+    <div id="roles-area" style="display:none;">
+        <span class="badge" id="txt-member">عضو</span>
     </div>
 </div>
 
 <script>
-    const tr = {
-        ar: { title: "مرحباً بك في منصة شفرة", login: "تسجيل الدخول", member: "عضو", dev: "مبرمج", btn: "English" },
-        en: { title: "Welcome to Shifra Platform", login: "Login", member: "Member", dev: "Developer", btn: "العربية" }
+    const langData = {
+        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", member: "عضو", btn: "English", hi: "مرحباً" },
+        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", member: "Member", btn: "العربية", hi: "Hello" }
     };
 
-    let lang = localStorage.getItem('lang') || 'ar';
+    let currentLang = localStorage.getItem('lang') || 'ar';
 
-    function setLang(l) {
-        lang = l;
-        localStorage.setItem('lang', l);
-        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-        document.getElementById('txt-title').innerText = tr[lang].title;
-        document.getElementById('login-btn').innerText = tr[lang].login;
-        document.getElementById('lang-btn').innerText = tr[lang].btn;
-        document.getElementById('role-member').innerText = tr[lang].member;
-        document.getElementById('role-dev').innerText = tr[lang].dev;
+    function updatePage() {
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('txt-title').innerText = langData[currentLang].title;
+        document.getElementById('txt-desc').innerText = langData[currentLang].desc;
+        document.getElementById('txt-member').innerText = langData[currentLang].member;
+        document.getElementById('btn-lang').innerText = langData[currentLang].btn;
     }
 
-    function toggleLang() { setLang(lang === 'ar' ? 'en' : 'ar'); }
+    function toggleLang() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        localStorage.setItem('lang', currentLang);
+        updatePage();
+    }
 
-    // جلب بيانات المستخدم
-    window.onload = () => {
-        setLang(lang);
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        const token = fragment.get('access_token');
-        
-        if (token) {
-            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json())
-            .then(user => {
-                document.getElementById('auth-box').innerHTML = `
-                    <div class="user-panel">
-                        <img class="avatar" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
-                        <span>${user.username}</span>
-                    </div>`;
-                document.getElementById('user-info').style.display = 'block';
-                // هنا مستقبلاً تربطها بالبوت للتحقق من الرتبة
-                if(user.username.includes("Dev")) document.getElementById('role-dev').style.display = 'inline';
-            });
-        }
-    };
+    // التحقق من تسجيل الدخول
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const token = fragment.get('access_token');
+
+    if (token) {
+        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(user => {
+            document.getElementById('user-area').innerHTML = 
+                `<div class="user-box">${langData[currentLang].hi} ${user.username} 👋</div>`;
+            document.getElementById('roles-area').style.display = 'block';
+        });
+    } else {
+        document.getElementById('user-area').innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">تسجيل الدخول</a>`;
+    }
+
+    updatePage();
 </script>
 </body>
 </html>
