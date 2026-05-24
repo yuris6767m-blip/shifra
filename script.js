@@ -1,24 +1,52 @@
-// متغير اللغة العالمي الافتراضي
+const WORKER_URL = 'https://shifra-api.yuris6767m.workers.dev';
+
 let currentLang = localStorage.getItem('site_lang') || 'ar';
+let currentUser = null;
 
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    if(sidebar) {
-        sidebar.classList.toggle('open');
-    }
+    if (sidebar) sidebar.classList.toggle('open');
 }
 
-function secureLink(name) {
-    if (!localStorage.getItem('discord_token')) {
-        alert(currentLang === 'ar' ? `⚠️ يتوجب عليك تسجيل الدخول أولاً للوصول إلى ${name}` : `⚠️ You must log in first to access ${name}`);
-    } else {
-        alert(currentLang === 'ar' ? `مرحباً بك في ${name}` : `Welcome to ${name}`);
+function toggleLangMenu() {
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function selectLanguage(lang) {
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+    applyLanguage(lang);
+}
+
+document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.lang-btn-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+        const dropdown = document.getElementById('lang-dropdown');
+        if (dropdown) dropdown.classList.remove('open');
     }
+});
+
+function secureLink(name, allowedRoles) {
+    if (!currentUser) {
+        alert(currentLang === 'ar'
+            ? `⚠️ يتوجب عليك تسجيل الدخول أولاً للوصول إلى ${name}`
+            : `⚠️ You must log in first to access ${name}`);
+        return;
+    }
+    const userRole = currentUser.role ? currentUser.role.name : null;
+    if (!userRole || !allowedRoles.includes(userRole)) {
+        alert(currentLang === 'ar'
+            ? `🔒 ليس لديك صلاحية الوصول إلى ${name}`
+            : `🔒 You don't have permission to access ${name}`);
+        return;
+    }
+    alert(currentLang === 'ar' ? `مرحباً بك في ${name}` : `Welcome to ${name}`);
 }
 
 const translations = {
     ar: {
-        toggleBtn: "English",
+        toggleBtn: "🌐 Language",
         loginBtn: "تسجيل الدخول عبر الديسكورد",
         mainTitle: "منصة شفرة",
         mainDesc: "الحاضنة التقنية الأولى لتطوير مهارات المبرمج العربي والتمكين البرمجي الفعال تحت إدارة فريق بصمة.",
@@ -36,10 +64,13 @@ const translations = {
         sidebarTitle: "قائمة المنصة",
         devPanel: "لوحة المبرمجين",
         awards: "الجوائز والترقيات",
-        welcome: "مرحباً بك، "
+        welcome: "مرحباً، ",
+        logout: "تسجيل الخروج",
+        notInServer: "⚠️ أنت لست عضواً في السيرفر",
+        noRole: "زائر",
     },
     en: {
-        toggleBtn: "العربية",
+        toggleBtn: "🌐 Language",
         loginBtn: "Login with Discord",
         mainTitle: "Shifra Platform",
         mainDesc: "The premier technical incubator for developing Arab developers' skills.",
@@ -57,7 +88,10 @@ const translations = {
         sidebarTitle: "Platform Menu",
         devPanel: "Developers Panel",
         awards: "Awards & Promotions",
-        welcome: "Welcome, "
+        welcome: "Welcome, ",
+        logout: "Logout",
+        notInServer: "⚠️ You are not a member of the server",
+        noRole: "Visitor",
     }
 };
 
@@ -69,16 +103,8 @@ function applyLanguage(lang) {
     htmlTag.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
     htmlTag.setAttribute('lang', lang);
 
-    // دالة مساعدة لتحديث النصوص فقط إذا وجد العنصر
-    const updateText = (id, text) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = text;
-    };
-    
-    const updateHTML = (id, html) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = html;
-    };
+    const updateText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+    const updateHTML = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
 
     updateText('lang-toggle-btn', translations[lang].toggleBtn);
     updateText('text-login-btn', translations[lang].loginBtn);
@@ -99,30 +125,96 @@ function applyLanguage(lang) {
     updateText('link-dev-panel', translations[lang].devPanel);
     updateText('link-awards', translations[lang].awards);
 
+    updateSidebarLinks();
     checkDiscordUser();
 }
 
-function toggleLanguage() {
-    applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+function updateSidebarLinks() {
+    const devPanel = document.getElementById('link-dev-panel');
+    const awards = document.getElementById('link-awards');
+    const allowedDev = ['مبرمج', 'مطور', 'إداري', 'مالك'];
+    const allowedAwards = ['عضو', 'متعلم', 'مبرمج', 'مطور', 'إداري', 'مالك', 'صديق'];
+    const userRole = currentUser?.role?.name || null;
+
+    if (devPanel) devPanel.classList.toggle('locked', !currentUser || !allowedDev.includes(userRole));
+    if (awards) awards.classList.toggle('locked', !currentUser || !allowedAwards.includes(userRole));
 }
 
-function checkDiscordUser() {
+function logout() {
+    localStorage.removeItem('discord_token');
+    currentUser = null;
+    updateSidebarLinks();
+    const container = document.getElementById('discord-auth-container');
+    if (container) {
+        container.innerHTML = `
+            <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify%20guilds.members.read">
+                <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="#fff">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.73-10.93,68.43,68.43,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.65-2.1a75.22,75.22,0,0,0,92.82,0c.84.73,1.74,1.43,2.65,2.1a68.43,68.43,0,0,1-10.64,5.12,74.37,74.37,0,0,0,6.73,10.93,105.73,105.73,0,0,0,31.05-18.83C129.54,50.33,123.63,27.49,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.92,46,53.7,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.16,46,95.94,53,91,65.69,84.69,65.69Z"/>
+                </svg>
+                <span id="text-login-btn">${translations[currentLang].loginBtn}</span>
+            </a>`;
+    }
+}
+
+async function checkDiscordUser() {
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let accessToken = fragment.get('access_token') || localStorage.getItem('discord_token');
 
-    if (accessToken) {
-        localStorage.setItem('discord_token', accessToken);
-        if (window.location.hash.includes('access_token')) window.history.replaceState(null, null, window.location.pathname);
+    if (!accessToken) { updateSidebarLinks(); return; }
 
-        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then(res => res.ok ? res.json() : Promise.reject())
-        .then(user => {
-            const container = document.getElementById('discord-auth-container');
-            if(!container) return;
-            container.innerHTML = `<div style="color:white; padding:10px;">${translations[currentLang].welcome}${user.username}</div>`;
-        })
-        .catch(() => localStorage.removeItem('discord_token'));
+    localStorage.setItem('discord_token', accessToken);
+    if (window.location.hash.includes('access_token')) {
+        window.history.replaceState(null, null, window.location.pathname);
     }
+
+    try {
+        const res = await fetch(`${WORKER_URL}/member`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        if (!res.ok) {
+            if (res.status === 403) showUserNotInServer();
+            else { localStorage.removeItem('discord_token'); updateSidebarLinks(); }
+            return;
+        }
+
+        const data = await res.json();
+        currentUser = data;
+        showUserInSidebar(data);
+        updateSidebarLinks();
+
+    } catch (e) {
+        localStorage.removeItem('discord_token');
+        updateSidebarLinks();
+    }
+}
+
+function showUserInSidebar(data) {
+    const container = document.getElementById('discord-auth-container');
+    if (!container) return;
+    const avatarHTML = data.avatar
+        ? `<img src="${data.avatar}" alt="avatar">`
+        : `<div style="width:44px;height:44px;border-radius:50%;background:#5865F2;border:2px solid var(--gold-text);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">👤</div>`;
+    const roleName = data.role ? data.role.name : translations[currentLang].noRole;
+    container.innerHTML = `
+        <div class="user-info">
+            ${avatarHTML}
+            <div class="user-details">
+                <div class="user-name">${translations[currentLang].welcome}${data.username}</div>
+                <span class="user-role">${roleName}</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">${translations[currentLang].logout}</button>
+        </div>`;
+}
+
+function showUserNotInServer() {
+    const container = document.getElementById('discord-auth-container');
+    if (!container) return;
+    container.innerHTML = `
+        <div style="color:#ffaaaa;font-size:0.85rem;padding:10px;background:rgba(255,0,0,0.1);border-radius:8px;border:1px solid rgba(255,0,0,0.2);">
+            ${translations[currentLang].notInServer}
+            <br><button onclick="logout()" style="margin-top:8px;background:none;border:1px solid #ffaaaa;color:#ffaaaa;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Cairo',sans-serif;">${translations[currentLang].logout}</button>
+        </div>`;
 }
 
 window.onload = () => applyLanguage(currentLang);
