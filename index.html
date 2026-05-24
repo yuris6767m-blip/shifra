@@ -4,40 +4,46 @@
     <meta charset="UTF-8">
     <title>منصة شفرة</title>
     <style>
-        body { background: #580c10; color: white; text-align: center; padding: 50px; font-family: sans-serif; }
+        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
+        .user-box { background: #d4af37; color: #580c10; padding: 15px; border-radius: 10px; display: inline-block; font-weight: bold; }
+        .login-link { color: gold; font-weight: bold; text-decoration: none; font-size: 1.2em; }
     </style>
 </head>
 <body>
 
-    <h1 id="msg">جاري التحقق...</h1>
+    <h1 id="main-title">منصة شفرة</h1>
+    <div id="app">جاري المعالجة...</div>
 
     <script>
-        // دالة لجلب التوكن سواء كان في hash أو في query
-        function getToken() {
-            let hash = window.location.hash.substring(1);
-            let search = window.location.search.substring(1);
-            let params = new URLSearchParams(hash || search);
-            return params.get('access_token');
+        // دالة لجلب البيانات مباشرة دون تدخل منك
+        function init() {
+            const app = document.getElementById('app');
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
+
+            if (token) {
+                // جلب بيانات المستخدم
+                fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    app.innerHTML = `<div class="user-box">أهلاً بك يا ${user.username} 👋</div>`;
+                    // مسح الـ Token من الرابط فورياً ليبقى الرابط نظيفاً
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch(() => {
+                    app.innerHTML = "حدث خطأ، يرجى المحاولة لاحقاً.";
+                });
+            } else {
+                // عرض رابط تسجيل الدخول
+                app.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-link">تسجيل الدخول عبر ديسكورد</a>`;
+            }
         }
 
-        const token = getToken();
-
-        if (token) {
-            fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(user => {
-                document.getElementById('msg').innerHTML = `أهلاً بك يا ${user.username} 👋`;
-                // تنظيف الرابط نهائياً لمنع أي مشاكل
-                window.history.replaceState({}, document.title, window.location.pathname);
-            })
-            .catch(() => {
-                document.getElementById('msg').innerText = "حدث خطأ في الاتصال، حاول مجدداً.";
-            });
-        } else {
-            document.getElementById('msg').innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold;">اضغط هنا لتسجيل الدخول</a>`;
-        }
+        // تشغيل الدالة فور تحميل الصفحة
+        window.onload = init;
     </script>
 </body>
 </html>
