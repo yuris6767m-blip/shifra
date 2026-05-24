@@ -2,48 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة شفرة</title>
+    <title>منصة شفرة - تصحيح</title>
     <style>
-        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
-        .user-box { background: #d4af37; color: #580c10; padding: 15px; border-radius: 10px; display: inline-block; font-weight: bold; }
-        .login-btn { background: white; color: #580c10; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+        body { background: #580c10; color: white; text-align: center; padding: 50px; font-family: sans-serif; }
+        .box { background: #d4af37; padding: 20px; border-radius: 10px; color: #580c10; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <h1 id="main-title">منصة شفرة</h1>
-    <div id="app">جاري التحميل...</div>
+    <h1>منصة شفرة</h1>
+    <div id="debug-area">
+        <button onclick="checkAuth()" style="padding:15px; cursor:pointer;">اضغط هنا للتحقق من هويتك</button>
+    </div>
 
     <script>
-        // ننتظر حتى يتحمل كل شيء في الصفحة تماماً
-        window.addEventListener('load', function() {
-            const app = document.getElementById('app');
-            const loginUrl = "https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify";
-
+        function checkAuth() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
             const token = params.get('access_token');
 
-            if (token) {
-                // محاولة جلب البيانات
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(user => {
-                    if (user.username) {
-                        app.innerHTML = `<div class="user-box">أهلاً بك يا ${user.username} 👋</div>`;
-                    } else {
-                        app.innerHTML = `<a href="${loginUrl}" class="login-btn">سجل الدخول مجدداً</a>`;
-                    }
-                })
-                .catch(() => {
-                    app.innerHTML = `<a href="${loginUrl}" class="login-btn">سجل الدخول مجدداً</a>`;
-                });
-            } else {
-                app.innerHTML = `<a href="${loginUrl}" class="login-btn">تسجيل الدخول عبر ديسكورد</a>`;
+            if (!token) {
+                alert("لا يوجد توكن في الرابط! سجل الدخول أولاً.");
+                return;
             }
-        });
+
+            fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+                document.getElementById('debug-area').innerHTML = `<div class="box">أهلاً بك يا ${user.username}</div>`;
+            })
+            .catch(err => {
+                alert("خطأ في الاتصال: " + err);
+            });
+        }
     </script>
 </body>
 </html>
