@@ -11,28 +11,29 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
 body { background-color: var(--bg-burgundy); color: var(--text-light); line-height: 1.8; transition: direction 0.3s ease; }
 
-/* شريط التحكم العلوي المحدث بـ ☰ وزر اللغة */
+/* --- شريط التحكم العلوي (معدل باللون البيج) --- */
 .top-control-bar {
-    max-width: 1100px;
-    margin: 10px auto 0;
-    padding: 0 20px;
+    max-width: 100%; /* جعلناه يأخذ عرض الشاشة ليكون كالشريط العلوي */
+    padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--bg-beige); /* اللون البيج المطلوب */
+    border-bottom: 2px solid var(--gold-text);
 }
 .menu-toggle-btn {
     background: none;
     border: none;
-    color: var(--gold-text);
+    color: var(--bg-burgundy); /* عنابي ليظهر بوضوح على البيج */
     font-size: 1.8rem;
     cursor: pointer;
     transition: 0.3s;
 }
-.menu-toggle-btn:hover { color: #fff; }
+.menu-toggle-btn:hover { color: #000; }
 
 .lang-btn {
-    background: var(--gold-text);
-    color: var(--text-dark);
+    background: var(--bg-burgundy); /* عنابي ليظهر بوضوح على البيج */
+    color: var(--bg-beige);
     border: none;
     padding: 6px 14px;
     font-weight: bold;
@@ -41,7 +42,7 @@ body { background-color: var(--bg-burgundy); color: var(--text-light); line-heig
     font-size: 0.9rem;
     transition: 0.3s;
 }
-.lang-btn:hover { background: #fff; color: var(--bg-burgundy); }
+.lang-btn:hover { background: #420609; color: #fff; }
 
 /* القائمة الجانبية الاحترافية المتغيرة حسب الاتجاه */
 #sidebar {
