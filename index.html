@@ -1,37 +1,7 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>منصة شفرة | Shifra Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --main: #580c10; --gold: #d4af37; --bg: #f4ebd9; }
-        body { font-family: 'Cairo', sans-serif; background: var(--main); color: white; margin: 0; padding: 20px; text-align: center; }
-        .nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: auto; }
-        .user-box { background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-        .content { margin-top: 50px; }
-        .badge { display: inline-block; background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 5px; margin-top: 10px; }
-    </style>
-</head>
-<body>
-
-<div class="nav">
-    <button onclick="toggleLang()" id="btn-lang" style="cursor:pointer; padding:5px 15px;">English</button>
-    <div id="user-area"></div>
-</div>
-
-<div class="content">
-    <h1 id="txt-title">منصة شفرة</h1>
-    <p id="txt-desc">الحاضنة التقنية الأولى للمبرمج العربي.</p>
-    <div id="roles-area" style="display:none;">
-        <span class="badge" id="txt-member">عضو</span>
-    </div>
-</div>
-
 <script>
     const langData = {
-        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", member: "عضو", btn: "English", hi: "مرحباً" },
-        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", member: "Member", btn: "العربية", hi: "Hello" }
+        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", member: "عضو", btn: "English", hi: "مرحباً", login: "تسجيل الدخول" },
+        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", member: "Member", btn: "العربية", hi: "Hello", login: "Login" }
     };
 
     let currentLang = localStorage.getItem('lang') || 'ar';
@@ -50,23 +20,40 @@
         updatePage();
     }
 
-    // التحقق من تسجيل الدخول
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const token = fragment.get('access_token');
-
-    if (token) {
-        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => res.json())
+    // الدالة المسؤولة عن جلب بيانات المستخدم
+    function fetchUserData(token) {
+        fetch('https://discord.com/api/users/@me', { 
+            headers: { Authorization: `Bearer ${token}` } 
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Expired'); // إذا انتهت الصلاحية
+            return res.json();
+        })
         .then(user => {
             document.getElementById('user-area').innerHTML = 
                 `<div class="user-box">${langData[currentLang].hi} ${user.username} 👋</div>`;
             document.getElementById('roles-area').style.display = 'block';
+        })
+        .catch(() => {
+            // إذا حدث أي خطأ (انتهاء صلاحية أو غيره)، امسح التوكن وأظهر رابط الدخول
+            window.location.hash = "";
+            showLoginLink();
         });
+    }
+
+    function showLoginLink() {
+        document.getElementById('user-area').innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">${langData[currentLang].login}</a>`;
+    }
+
+    // منطق التشغيل
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const token = fragment.get('access_token');
+
+    if (token) {
+        fetchUserData(token);
     } else {
-        document.getElementById('user-area').innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">تسجيل الدخول</a>`;
+        showLoginLink();
     }
 
     updatePage();
 </script>
-</body>
-</html>
