@@ -2,80 +2,44 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة شفرة | Shifra Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>منصة شفرة</title>
     <style>
-        :root { --main: #580c10; --gold: #d4af37; --bg: #f4ebd9; }
-        body { font-family: 'Cairo', sans-serif; background: var(--main); color: white; margin: 0; padding: 20px; text-align: center; }
-        .nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: auto; }
-        /* تصميم صندوق المستخدم */
-        .user-panel { display: flex; align-items: center; gap: 10px; background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 50px; font-weight: bold; }
-        .avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; }
-        .content { margin-top: 50px; }
-        .badge { display: inline-block; background: var(--gold); color: var(--main); padding: 5px 15px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
+        .user-box { background: #d4af37; color: #580c10; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="nav">
-    <button onclick="toggleLang()" id="btn-lang" style="cursor:pointer; padding:5px 15px;">English</button>
-    <div id="auth-container">
-        <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">تسجيل الدخول</a>
-    </div>
-</div>
+    <h1 id="title">منصة شفرة</h1>
+    <div id="auth-status">جاري التحقق...</div>
 
-<div class="content">
-    <h1 id="txt-title">منصة شفرة</h1>
-    <p id="txt-desc">الحاضنة التقنية الأولى للمبرمج العربي.</p>
-    <div id="roles-area" style="display:none;">
-        <span class="badge" id="txt-member">عضو</span>
-    </div>
-</div>
+    <script>
+        const authStatus = document.getElementById('auth-status');
+        
+        // التحقق من وجود توكن في الرابط
+        if (window.location.hash) {
+            const params = new URLSearchParams(window.location.hash.substring(1));
+            const token = params.get('access_token');
 
-<script>
-    const langData = {
-        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", member: "عضو", btn: "English" },
-        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", member: "Member", btn: "العربية" }
-    };
-
-    let currentLang = localStorage.getItem('lang') || 'ar';
-
-    function updatePage() {
-        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-        document.getElementById('txt-title').innerText = langData[currentLang].title;
-        document.getElementById('txt-desc').innerText = langData[currentLang].desc;
-        document.getElementById('txt-member').innerText = langData[currentLang].member;
-        document.getElementById('btn-lang').innerText = langData[currentLang].btn;
-    }
-
-    function toggleLang() {
-        currentLang = currentLang === 'ar' ? 'en' : 'ar';
-        localStorage.setItem('lang', currentLang);
-        updatePage();
-    }
-
-    // التحقق من التوكن (بدون مسح الصفحة)
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const token = fragment.get('access_token');
-
-    if (token) {
-        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(user => {
-            // إظهار البيانات في مكانها المخصص
-            const authContainer = document.getElementById('auth-container');
-            const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`;
-            
-            authContainer.innerHTML = `
-                <div class="user-panel">
-                    <img src="${avatarUrl}" class="avatar">
-                    <span>${user.username}</span>
-                </div>`;
-            document.getElementById('roles-area').style.display = 'block';
-        });
-    }
-
-    updatePage();
-</script>
+            if (token) {
+                // جلب البيانات من ديسكورد
+                fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    authStatus.innerHTML = `<div class="user-box">مرحباً ${user.username} 👋</div>`;
+                    // تنظيف الرابط من التوكن بعد استخدامه لحماية خصوصيتك
+                    window.history.replaceState(null, null, window.location.pathname);
+                })
+                .catch(() => {
+                    authStatus.innerHTML = "حدث خطأ، يرجى المحاولة لاحقاً.";
+                });
+            }
+        } else {
+            // إذا لم يكن هناك توكن، أظهر زر تسجيل الدخول
+            authStatus.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold; font-weight:bold;">تسجيل الدخول عبر الديسكورد</a>`;
+        }
+    </script>
 </body>
 </html>
