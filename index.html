@@ -4,46 +4,70 @@
     <meta charset="UTF-8">
     <title>منصة شفرة</title>
     <style>
-        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
-        .box { background: #d4af37; color: #580c10; padding: 15px; border-radius: 15px; display: inline-block; font-weight: bold; }
+        body { margin: 0; font-family: sans-serif; background: #580c10; color: white; }
+        /* القائمة العلوية */
+        nav { display: flex; justify-content: space-between; padding: 20px; background: #3c090a; align-items: center; }
+        .menu-btn { cursor: pointer; font-size: 24px; }
+        /* القائمة الجانبية (مخفية) */
+        #sidebar { display: none; position: fixed; right: 0; top: 0; width: 250px; height: 100%; background: #222; padding: 20px; }
+        .main-content { padding: 50px; text-align: center; }
+        .login-btn { background: #d4af37; padding: 10px 20px; color: black; text-decoration: none; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>منصة شفرة</h1>
-    <div id="status">جاري التحقق...</div>
+<nav>
+    <div>منصة شفرة</div>
+    <div id="auth-nav">
+        <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="login-btn">تسجيل الدخول</a>
+        <span id="menu-icon" class="menu-btn" onclick="toggleSidebar()" style="display:none;">☰</span>
+    </div>
+</nav>
 
-    <script>
-        const statusDiv = document.getElementById('status');
+<div id="sidebar">
+    <h2 id="user-name">مرحباً</h2>
+    <hr>
+    <p>الرتبة: <span id="user-role">عضو</span></p>
+    <p>الجوائز والترقيات ستظهر هنا</p>
+    <button onclick="logout()">تسجيل خروج</button>
+</div>
 
-        // 1. هل يوجد توكن في الرابط؟ احفظه في الذاكرة
-        const fragment = new URLSearchParams(window.location.hash.substring(1));
-        const token = fragment.get('access_token');
-        
-        if (token) {
-            localStorage.setItem('user_token', token);
-            window.location.href = window.location.pathname; // تنظيف الرابط
-        }
+<div class="main-content">
+    <h1>مرحباً بك في المنصة</h1>
+    <p>هذه الواجهة معروضة للجميع.</p>
+</div>
 
-        // 2. هل يوجد توكن في الذاكرة؟ استخدمه
-        const savedToken = localStorage.getItem('user_token');
+<script>
+    function toggleSidebar() {
+        const side = document.getElementById('sidebar');
+        side.style.display = side.style.display === 'block' ? 'none' : 'block';
+    }
 
-        if (savedToken) {
-            fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${savedToken}` }
-            })
-            .then(res => res.json())
-            .then(user => {
-                if (user.username) {
-                    statusDiv.innerHTML = `<div class="box">أهلاً بك يا ${user.username} 👋</div>`;
-                } else {
-                    localStorage.removeItem('user_token');
-                    location.reload();
-                }
-            });
-        } else {
-            statusDiv.innerHTML = `<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold;">تسجيل الدخول عبر ديسكورد</a>`;
-        }
-    </script>
+    function logout() {
+        localStorage.removeItem('user_token');
+        location.reload();
+    }
+
+    // التحقق التلقائي
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const token = params.get('access_token');
+
+    if (token) {
+        localStorage.setItem('user_token', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    const savedToken = localStorage.getItem('user_token');
+    if (savedToken) {
+        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${savedToken}` } })
+        .then(res => res.json())
+        .then(user => {
+            document.getElementById('login-link').style.display = 'none';
+            document.getElementById('menu-icon').style.display = 'block';
+            document.getElementById('user-name').innerText = "مرحباً " + user.username;
+        });
+    }
+</script>
 </body>
 </html>
