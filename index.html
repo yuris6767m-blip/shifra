@@ -1,35 +1,83 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
     <meta charset="UTF-8">
     <title>منصة شفرة</title>
     <style>
-        body { background: #580c10; color: white; text-align: center; font-family: sans-serif; padding: 50px; }
+        body { margin: 0; font-family: sans-serif; background: #580c10; color: white; transition: 0.3s; }
+        nav { display: flex; justify-content: space-between; padding: 20px; background: #3c090a; align-items: center; }
+        .main-content { padding: 150px 20px; text-align: center; }
+        
+        #sidebar { position: fixed; right: -250px; top: 0; width: 250px; height: 100%; background: #222; padding: 20px; transition: 0.3s; z-index: 1000; box-shadow: -2px 0 10px rgba(0,0,0,0.5); }
+        #sidebar.open { right: 0; }
+        .link { display: block; color: #d4af37; padding: 15px 0; text-decoration: none; border-bottom: 1px solid #444; }
+        .lang-btn { cursor: pointer; background: #580c10; border: 1px solid #d4af37; color: white; padding: 5px 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <h1>منصة شفرة</h1>
-    <p>الحاضنة التقنية الأولى للمبرمج العربي.</p>
-    <div id="content">جاري التحقق...</div>
 
-    <script>
-        // هذا الكود بسيط جداً ولا يمسح شيئاً
-        const content = document.getElementById('content');
-        
-        // جرب تسجيل الدخول
-        content.innerHTML = '<a href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:gold;">اضغط هنا لتسجيل الدخول</a>';
-        
-        const params = new URLSearchParams(window.location.hash.substring(1));
-        const token = params.get('access_token');
-        
-        if (token) {
-            content.innerHTML = "تم استلام البيانات... جاري العرض";
-            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json())
-            .then(user => {
-                content.innerHTML = "مرحباً " + user.username;
-            });
-        }
-    </script>
+<nav>
+    <div onclick="toggleSidebar()" style="cursor:pointer; font-size: 28px;">☰</div>
+    <div>
+        <button class="lang-btn" onclick="toggleLang()">English / العربية</button>
+    </div>
+</nav>
+
+<div id="sidebar">
+    <h3 id="side-title">القائمة</h3>
+    <div id="auth-area">
+        <a id="login-link" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="link">تسجيل الدخول</a>
+    </div>
+    <a href="#" class="link" onclick="alert('يجب تسجيل الدخول')">لوحة المبرمجين</a>
+    <a href="#" class="link" onclick="localStorage.clear(); location.reload();">تسجيل الخروج</a>
+</div>
+
+<div class="main-content">
+    <h1 id="txt-title">منصة شفرة</h1>
+    <p id="txt-desc">الحاضنة التقنية الأولى للمبرمج العربي.</p>
+</div>
+
+<script>
+    const lang = {
+        ar: { title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", side: "القائمة", login: "تسجيل الدخول" },
+        en: { title: "Shifra Platform", desc: "The premier incubator for Arab developers.", side: "Menu", login: "Login" }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'ar';
+
+    function updateUI() {
+        document.getElementById('txt-title').innerText = lang[currentLang].title;
+        document.getElementById('txt-desc').innerText = lang[currentLang].desc;
+        document.getElementById('side-title').innerText = lang[currentLang].side;
+        document.getElementById('html-root').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    }
+
+    function toggleLang() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        localStorage.setItem('lang', currentLang);
+        updateUI();
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+    // التحقق من الدخول
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const token = params.get('access_token');
+    if (token) {
+        localStorage.setItem('t', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    const t = localStorage.getItem('t');
+    if (t) {
+        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${t}` } })
+        .then(r => r.json())
+        .then(u => {
+            if(u.username) document.getElementById('auth-area').innerHTML = `<div style="color:gold;">مرحباً ${u.username} 👋</div>`;
+        });
+    }
+
+    updateUI();
+</script>
 </body>
 </html>
