@@ -2,77 +2,81 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة شفرة | Shifra Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-burgundy: #580c10; --bg-beige: #f4ebd9; --gold-text: #d4af37; --text-dark: #2b0608; }
-        body { background-color: var(--bg-burgundy); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; }
-        .lang-bar { max-width: 1100px; margin: 10px auto; padding: 0 20px; display: flex; justify-content: flex-end; }
-        .lang-btn { background: var(--gold-text); border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        header { text-align: center; padding: 50px 20px; }
-        #auth-area { max-width: 1100px; margin: 0 auto 20px; display: flex; justify-content: flex-start; padding: 0 20px; }
-        .btn-login { background: #5865F2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        :root { --main: #580c10; --gold: #d4af37; --bg: #f4ebd9; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; }
+        .navbar { display: flex; justify-content: space-between; padding: 20px; background: var(--main); color: white; align-items: center; }
+        .user-panel { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 5px 15px; border-radius: 50px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); }
+        .content { padding: 40px; text-align: center; }
+        .badge { background: var(--gold); padding: 5px 10px; border-radius: 5px; font-size: 0.8em; margin: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="lang-bar">
-        <button class="lang-btn" id="lang-btn" onclick="toggleLang()">English</button>
+<div class="navbar">
+    <button onclick="toggleLang()" id="lang-btn">English</button>
+    <div id="auth-box">
+        <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" style="color:white">تسجيل الدخول</a>
     </div>
+</div>
 
-    <header>
-        <div id="auth-area">
-            <a id="login-btn" href="https://discord.com/oauth2/authorize?client_id=1124438537090121738&response_type=token&redirect_uri=https%3A%2F%2Fyuris6767m-blip.github.io%2Fshifra%2F&scope=identify" class="btn-login">
-                <i class="fab fa-discord"></i> <span id="txt-login">تسجيل الدخول عبر الديسكورد</span>
-            </a>
+<div class="content">
+    <h1 id="txt-title">مرحباً بك في منصة شفرة</h1>
+    <div id="user-info" style="display:none;">
+        <img id="user-avatar" class="avatar" src="">
+        <h2 id="user-name"></h2>
+        <div id="user-roles">
+            <span class="badge" id="role-member">عضو</span>
+            <span class="badge" id="role-dev" style="display:none;">مبرمج</span>
         </div>
-        <h1 id="txt-title">منصة شفرة</h1>
-    </header>
-
-    <div class="container">
-        <p id="txt-desc">الحاضنة التقنية الأولى للمبرمج العربي.</p>
     </div>
+</div>
 
-    <script>
-        const translations = {
-            ar: { login: "تسجيل الدخول عبر الديسكورد", title: "منصة شفرة", desc: "الحاضنة التقنية الأولى للمبرمج العربي.", btn: "English" },
-            en: { login: "Login with Discord", title: "Shifra Platform", desc: "The premier technical incubator for Arab developers.", btn: "العربية" }
-        };
+<script>
+    const tr = {
+        ar: { title: "مرحباً بك في منصة شفرة", login: "تسجيل الدخول", member: "عضو", dev: "مبرمج", btn: "English" },
+        en: { title: "Welcome to Shifra Platform", login: "Login", member: "Member", dev: "Developer", btn: "العربية" }
+    };
 
-        let lang = localStorage.getItem('lang') || 'ar';
+    let lang = localStorage.getItem('lang') || 'ar';
 
-        function updateUI() {
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = lang;
-            document.getElementById('txt-login').innerText = translations[lang].login;
-            document.getElementById('txt-title').innerText = translations[lang].title;
-            document.getElementById('txt-desc').innerText = translations[lang].desc;
-            document.getElementById('lang-btn').innerText = translations[lang].btn;
-            document.getElementById('auth-area').style.justifyContent = lang === 'ar' ? 'flex-start' : 'flex-end';
+    function setLang(l) {
+        lang = l;
+        localStorage.setItem('lang', l);
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('txt-title').innerText = tr[lang].title;
+        document.getElementById('login-btn').innerText = tr[lang].login;
+        document.getElementById('lang-btn').innerText = tr[lang].btn;
+        document.getElementById('role-member').innerText = tr[lang].member;
+        document.getElementById('role-dev').innerText = tr[lang].dev;
+    }
+
+    function toggleLang() { setLang(lang === 'ar' ? 'en' : 'ar'); }
+
+    // جلب بيانات المستخدم
+    window.onload = () => {
+        setLang(lang);
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        const token = fragment.get('access_token');
+        
+        if (token) {
+            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(user => {
+                document.getElementById('auth-box').innerHTML = `
+                    <div class="user-panel">
+                        <img class="avatar" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
+                        <span>${user.username}</span>
+                    </div>`;
+                document.getElementById('user-info').style.display = 'block';
+                // هنا مستقبلاً تربطها بالبوت للتحقق من الرتبة
+                if(user.username.includes("Dev")) document.getElementById('role-dev').style.display = 'inline';
+            });
         }
-
-        function toggleLang() {
-            lang = lang === 'ar' ? 'en' : 'ar';
-            localStorage.setItem('lang', lang);
-            updateUI();
-        }
-
-        // معالجة الدخول
-        window.onload = () => {
-            updateUI();
-            const fragment = new URLSearchParams(window.location.hash.slice(1));
-            const token = fragment.get('access_token');
-            if (token) {
-                fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-                .then(res => res.json())
-                .then(user => {
-                    document.getElementById('auth-area').innerHTML = `<div style="background:#1a1a1a; padding:10px; border-radius:20px;">مرحباً ${user.username} 👋</div>`;
-                });
-            }
-        };
-    </script>
+    };
+</script>
 </body>
 </html>
